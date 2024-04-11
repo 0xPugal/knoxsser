@@ -11,6 +11,9 @@ Options:
   -A, --api       API key for Knoxss
   -h, --help      Display this help message
   ```
++ ``./KNOXSSer.sh -i input.txt``
+>Successfull XSS will be stored in xss.txt by default with full json reponse
+
 ## ToDo
 + Add Parallel scan functionality
 + Properly handle and print error messages from KNOXSS API
