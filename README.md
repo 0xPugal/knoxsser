@@ -11,6 +11,9 @@ Options:
   -A, --api       API key for Knoxss
   -h, --help      Display this help message
   ```
+## ToDo
++ Add Parallel scan functionality
++ Properly handle and print error messages from KNOXSS API
 
 ## Credits
 + An amazing [KNOXSS](https://knoxss.me/) API by Brute Logic.
