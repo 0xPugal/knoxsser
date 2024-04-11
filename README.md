@@ -20,4 +20,4 @@ Options:
 
 ## Credits
 + An amazing [KNOXSS](https://knoxss.me/) API by Brute Logic.
-+ This script was inspired by the [knoxnl](https://github.com/xnl-h4ck3r/knoxnl) tool by [xnl_h4ck3r](https://twitter.com/xnl_h4ck3r).
++ This script was inspired from the [knoxnl](https://github.com/xnl-h4ck3r/knoxnl) tool by [xnl_h4ck3r](https://twitter.com/xnl_h4ck3r).
