@@ -1,16 +1,18 @@
 # KNOXSSer
 ![KNOXSSer](https://github.com/0xPugal/KNOXSSer/blob/master/KNOXSSer.png)
 
-## Usage
+## Help
 ```
-Usage: knoxsser.sh [OPTIONS]
 Options:
   -i, --input     Input file containing URLs to scan
   -o, --output    Output file to save XSS results (default: xss.txt)
   -A, --api       API key for Knoxss
   -h, --help      Display this help message
-  ```
-![poc](https://github.com/0xPugal/KNOXSSer/assets/75373225/6c5eaa15-c781-4f83-abdf-127b336a08d5)
+```
+
+## Usage
+![poc2](https://github.com/0xPugal/KNOXSSer/assets/75373225/cca324aa-5c35-4018-9e7d-d87a524a31b1)
+![poc](https://github.com/0xPugal/KNOXSSer/assets/75373225/c12f5b38-f668-4e9f-8c1e-28cda061defc)
 
 ## ToDo
 + Add Parallel scan functionality
