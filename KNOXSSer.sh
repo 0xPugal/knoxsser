@@ -3,21 +3,19 @@
 CYAN='\033[0;36m'
 GREEN='\033[0;32m'
 RED='\033[0;31m'
+YELLOW='\033[1;33m'
 NC='\033[0m'
 
 print_banner() {
-    echo -e "${RED}                                                                                                                            ${NC}"
-    echo -e "${RED}  ██ ▄█▀ ███▄    █  ▒█████  ▒██   ██▒  ██████   ██████ ▓█████  ██▀███    ${NC}"
-    echo -e "${RED}  ██▄█▒  ██ ▀█   █ ▒██▒  ██▒▒▒ █ █ ▒░▒██    ▒ ▒██    ▒ ▓█   ▀ ▓██ ▒ ██▒  ${NC}"
-    echo -e "${RED} ▓███▄░ ▓██  ▀█ ██▒▒██░  ██▒░░  █   ░░ ▓██▄   ░ ▓██▄   ▒███   ▓██ ░▄█ ▒  ${NC}"
-    echo -e "${RED} ▓██ █▄ ▓██▒  ▐▌██▒▒██   ██░ ░ █ █ ▒   ▒   ██▒  ▒   ██▒▒▓█  ▄ ▒██▀▀█▄    ${NC}"
-    echo -e "${RED} ▒██▒ █▄▒██░   ▓██░░ ████▓▒░▒██▒ ▒██▒▒██████▒▒▒██████▒▒░▒████▒░██▓ ▒██▒  ${NC}"
-    echo -e "${RED} ▒ ▒▒ ▓▒░ ▒░   ▒ ▒ ░ ▒░▒░▒░ ▒▒ ░ ░▓ ░▒ ▒▓▒ ▒ ░▒ ▒▓▒ ▒ ░░░ ▒░ ░░ ▒▓ ░▒▓░  ${NC}"
-    echo -e "${RED} ░ ░▒ ▒░░ ░░   ░ ▒░  ░ ▒ ▒░ ░░   ░▒ ░░ ░▒  ░ ░░ ░▒  ░ ░ ░ ░  ░  ░▒ ░ ▒░  ${NC}"
-    echo -e "${RED} ░ ░░ ░    ░   ░ ░ ░ ░ ░ ▒   ░    ░  ░  ░  ░  ░  ░  ░     ░     ░░   ░   ${NC}"
-    echo -e "${RED} ░  ░            ░     ░ ░   ░    ░        ░        ░     ░  ░   ░       ${NC}"
-    echo -e "${RED}     Mass XSS Scanning for profit using KNOXSS API  - 0xPugal        ${NC}"
-    echo -e ""
+echo ""
+echo -e "${CYAN}██╗  ██╗███╗   ██╗ ██████╗ ██╗  ██╗███████╗███████╗███████╗██████╗  ${NC}"
+echo -e "${CYAN}██║ ██╔╝████╗  ██║██╔═══██╗╚██╗██╔╝██╔════╝██╔════╝██╔════╝██╔══██╗ ${NC}"
+echo -e "${CYAN}█████╔╝ ██╔██╗ ██║██║   ██║ ╚███╔╝ ███████╗███████╗█████╗  ██████╔╝ ${NC}"
+echo -e "${CYAN}██╔═██╗ ██║╚██╗██║██║   ██║ ██╔██╗ ╚════██║╚════██║██╔══╝  ██╔══██╗ ${NC}"
+echo -e "${CYAN}██║  ██╗██║ ╚████║╚██████╔╝██╔╝ ██╗███████║███████║███████╗██║  ██║ ${NC}"
+echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝ ${NC}"
+echo -e "    Mass XSS Scanning for profit using KNOXSS API  - 0xPugal       "
+echo -e ""
 }
 
 if [[ $# -eq 0 ]]; then
@@ -31,7 +29,6 @@ output_file="xss.txt"
 api_key="API KEY"
 
 usage() {
-    echo "Usage: $0 [OPTIONS]"
     print_banner
     echo "Options:"
     echo "  -i, --input     Input file containing URLs to scan"
@@ -104,7 +101,7 @@ while read line; do
     if [[ "$xss" == "true" ]]; then
         echo -e "${GREEN}XSS found - $poc ${NC} [API call: $api_call]"
     elif [[ "$xss" == "false" ]]; then
-        echo -e "${RED}No XSS found - $line${NC} [API call: $api_call]"
+        echo -e "${YELLOW}No XSS found - $line${NC} [API call: $api_call]"
     elif [[ "$error" == "KNOXSS can't test it (forbidden)" ]]; then
         echo -e "${RED}Forbidden - $line ${NC} [API call: $api_call]"
     else
