@@ -3,20 +3,21 @@
 CYAN='\033[0;36m'
 GREEN='\033[0;32m'
 RED='\033[0;31m'
-NC='\033[0m' 
+NC='\033[0m'
 
 print_banner() {
-echo -e "${RED} 																		${NC}"
-echo -e "${RED}  ██ ▄█▀ ███▄    █  ▒█████  ▒██   ██▒  ██████   ██████ ▓█████  ██▀███    ${NC}"
-echo -e "${RED}  ██▄█▒  ██ ▀█   █ ▒██▒  ██▒▒▒ █ █ ▒░▒██    ▒ ▒██    ▒ ▓█   ▀ ▓██ ▒ ██▒  ${NC}"
-echo -e "${RED} ▓███▄░ ▓██  ▀█ ██▒▒██░  ██▒░░  █   ░░ ▓██▄   ░ ▓██▄   ▒███   ▓██ ░▄█ ▒  ${NC}"
-echo -e "${RED} ▓██ █▄ ▓██▒  ▐▌██▒▒██   ██░ ░ █ █ ▒   ▒   ██▒  ▒   ██▒▒▓█  ▄ ▒██▀▀█▄    ${NC}"
-echo -e "${RED} ▒██▒ █▄▒██░   ▓██░░ ████▓▒░▒██▒ ▒██▒▒██████▒▒▒██████▒▒░▒████▒░██▓ ▒██▒  ${NC}"
-echo -e "${RED} ▒ ▒▒ ▓▒░ ▒░   ▒ ▒ ░ ▒░▒░▒░ ▒▒ ░ ░▓ ░▒ ▒▓▒ ▒ ░▒ ▒▓▒ ▒ ░░░ ▒░ ░░ ▒▓ ░▒▓░  ${NC}"
-echo -e "${RED} ░ ░▒ ▒░░ ░░   ░ ▒░  ░ ▒ ▒░ ░░   ░▒ ░░ ░▒  ░ ░░ ░▒  ░ ░ ░ ░  ░  ░▒ ░ ▒░  ${NC}"
-echo -e "${RED} ░ ░░ ░    ░   ░ ░ ░ ░ ░ ▒   ░    ░  ░  ░  ░  ░  ░  ░     ░     ░░   ░   ${NC}"
-echo -e "${RED} ░  ░            ░     ░ ░   ░    ░        ░        ░     ░  ░   ░       ${NC}"
-echo -e "${RED} 		Mass XSS Scanning for profit using KNOXSS API  - 0xPugal        ${NC}"                                                          
+    echo -e "${RED}                                                                                                                            ${NC}"
+    echo -e "${RED}  ██ ▄█▀ ███▄    █  ▒█████  ▒██   ██▒  ██████   ██████ ▓█████  ██▀███    ${NC}"
+    echo -e "${RED}  ██▄█▒  ██ ▀█   █ ▒██▒  ██▒▒▒ █ █ ▒░▒██    ▒ ▒██    ▒ ▓█   ▀ ▓██ ▒ ██▒  ${NC}"
+    echo -e "${RED} ▓███▄░ ▓██  ▀█ ██▒▒██░  ██▒░░  █   ░░ ▓██▄   ░ ▓██▄   ▒███   ▓██ ░▄█ ▒  ${NC}"
+    echo -e "${RED} ▓██ █▄ ▓██▒  ▐▌██▒▒██   ██░ ░ █ █ ▒   ▒   ██▒  ▒   ██▒▒▓█  ▄ ▒██▀▀█▄    ${NC}"
+    echo -e "${RED} ▒██▒ █▄▒██░   ▓██░░ ████▓▒░▒██▒ ▒██▒▒██████▒▒▒██████▒▒░▒████▒░██▓ ▒██▒  ${NC}"
+    echo -e "${RED} ▒ ▒▒ ▓▒░ ▒░   ▒ ▒ ░ ▒░▒░▒░ ▒▒ ░ ░▓ ░▒ ▒▓▒ ▒ ░▒ ▒▓▒ ▒ ░░░ ▒░ ░░ ▒▓ ░▒▓░  ${NC}"
+    echo -e "${RED} ░ ░▒ ▒░░ ░░   ░ ▒░  ░ ▒ ▒░ ░░   ░▒ ░░ ░▒  ░ ░░ ░▒  ░ ░ ░ ░  ░  ░▒ ░ ▒░  ${NC}"
+    echo -e "${RED} ░ ░░ ░    ░   ░ ░ ░ ░ ░ ▒   ░    ░  ░  ░  ░  ░  ░  ░     ░     ░░   ░   ${NC}"
+    echo -e "${RED} ░  ░            ░     ░ ░   ░    ░        ░        ░     ░  ░   ░       ${NC}"
+    echo -e "${RED}     Mass XSS Scanning for profit using KNOXSS API  - 0xPugal        ${NC}"
+    echo -e ""
 }
 
 if [[ $# -eq 0 ]]; then
@@ -45,23 +46,23 @@ while [[ $# -gt 0 ]]; do
     case $key in
         -i|--input)
             input_file="$2"
-            shift 
-            shift 
+            shift
+            shift
             ;;
         -o|--output)
             output_file="$2"
-            shift 
-            shift 
+            shift
+            shift
             ;;
         -A|--api)
             api_key="$2"
-            shift 
-            shift 
+            shift
+            shift
             ;;
         -h|--help)
             usage
             ;;
-        *)  
+        *)
             echo "Error: Unknown option: $1"
             usage
             ;;
@@ -87,22 +88,30 @@ trap handle_ctrl_c INT
 
 lineno=1
 api_calls=0
-todo_file="$(date +'%Y%m%d%H%M%S').todo"
+todo_file="${input_file%.*}-$(date +'%Y%m%d%H%M%S').todo"
 
+print_banner
 while read line; do
-    echo -e "${CYAN}Scanning $line${NC}"
+    echo -e "${CYAN}Scanning $line...${NC}"
 
     response=$(curl https://api.knoxss.pro -d target="$line" -H "X-API-KEY: $api_key" -s)
     api_calls=$((api_calls + 1))
-    if grep -q '"XSS": "true"' <<< "$response"; then
-        echo "$response" >> "$output_file"
-        api_call=$(grep -oP '"API Call": "\K[^"]+' <<< "$response")
-        echo -e "${GREEN}xss found for $line {API Call: $api_call} ${NC}"
+    xss=$(jq -r '.XSS' <<< "$response")
+    poc=$(jq -r '.PoC' <<< "$response")
+    error=$(jq -r '.Error' <<< "$response")
+    api_call=$(jq -r '.["API Call"]' <<< "$response")
+
+    if [[ "$xss" == "true" ]]; then
+        echo -e "${GREEN}XSS found - $poc ${NC} [API call: $api_call]"
+    elif [[ "$xss" == "false" ]]; then
+        echo -e "${RED}No XSS found - $line${NC} [API call: $api_call]"
+    elif [[ "$error" == "KNOXSS can't test it (forbidden)" ]]; then
+        echo -e "${RED}Forbidden - $line ${NC} [API call: $api_call]"
     else
-        api_call=$(grep -oP '"API Call": "\K[^"]+' <<< "$response")
-        echo -e "${RED}no xss found for $line {API Call: $api_call}${NC}"
+        echo -e "${RED}KNOXSS error - $line ${NC} [API call: $api_call]"
     fi
-    lineno=$((lineno + 1))
+                echo "$response" >> "$output_file"
+                lineno=$((lineno + 1))
 done < "$input_file"
 
 echo "Total API calls made: $api_calls"
