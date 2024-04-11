@@ -1,6 +1,5 @@
 # KNOXSSer
-A concise and effective bash script for mass XSS scanning utilizing the KN0X55 API by Brute Logic.
-![KNOXSSer](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser.png)
+![KNOXSSer](https://github.com/0xPugal/KNOXSSer/blob/master/KNOXSSer.png)
 
 ## Usage
 ```
@@ -11,9 +10,7 @@ Options:
   -A, --api       API key for Knoxss
   -h, --help      Display this help message
   ```
-+ ``./KNOXSSer.sh -i input.txt``
 ![poc](https://github.com/0xPugal/KNOXSSer/assets/75373225/6c5eaa15-c781-4f83-abdf-127b336a08d5)
->Successfull XSS will be stored in xss.txt by default with full json reponse
 
 ## ToDo
 + Add Parallel scan functionality
