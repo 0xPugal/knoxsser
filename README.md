@@ -1,6 +1,11 @@
 # KNOXSSer
 ![KNOXSSer](https://github.com/0xPugal/KNOXSSer/blob/master/KNOXSSer.png)
 
+## Installation
+```
+curl -sSL https://raw.githubusercontent.com/0xPugal/KNOXSSer/master/knoxsser -o knoxsser && chmod +x knoxsser && sudo cp knoxsser /usr/bin/
+```
+
 ## Help
 ```
 Options:
@@ -11,6 +16,10 @@ Options:
 ```
 
 ## Usage
+Basic Usage
+```
+knoxsser -i input.txt -A API_KEY -o out.txt
+```
 ![poc2](https://github.com/0xPugal/KNOXSSer/assets/75373225/cca324aa-5c35-4018-9e7d-d87a524a31b1)
 ![poc](https://github.com/0xPugal/KNOXSSer/assets/75373225/c12f5b38-f668-4e9f-8c1e-28cda061defc)
 
