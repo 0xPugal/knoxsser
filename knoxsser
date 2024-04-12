@@ -98,6 +98,7 @@ while read line; do
 
     if [[ "$xss" == "true" ]]; then
         echo -e "${GREEN}XSS found - $poc ${NC} [$api_call]"
+        echo "$response" >> "$output_file"
     elif [[ "$xss" == "false" ]]; then
         echo -e "${YELLOW}No XSS found - $line${NC} [$api_call]"
     elif [[ "$error" == "KNOXSS can't test it (forbidden)" ]]; then
@@ -105,7 +106,7 @@ while read line; do
     else
         echo -e "${RED}KNOXSS error - $line ${NC} [$api_call]"
     fi
-                echo "$response" >> "$output_file"
+                #echo "$response" >> "$output_file"
                 lineno=$((lineno + 1))
 done < "$input_file"
 
