@@ -1,5 +1,7 @@
 # KNOXSSer
-![KNOXSSer](https://github.com/0xPugal/KNOXSSer/blob/master/KNOXSSer.png)
+**A concise and effective bash script for mass XSS scanning utilizing the KN0X55 API by Brute Logic**
+
+<img src=KNOXSSer.png>
 
 ## Installation
 ```
@@ -7,18 +9,23 @@ curl -sSL https://raw.githubusercontent.com/0xPugal/KNOXSSer/master/knoxsser -o 
 ```
 
 ## Help
+
 ```
 Options:
   -i, --input     Input file containing URLs to scan
   -o, --output    Output file to save XSS results (default: xss.txt)
-  -A, --api       API key for Knoxss
-  -h, --help      Display this help message
+  -A, --api       Pass the KNOXSS API key
+  -h, --help      Display this help message and exit
+  -v, --version   Display the version and exit
 ```
 
 ## Usage
-Basic Usage
+> Configure your [KNOXSS API KEY](https://knoxss.me/) in [KNOXSSer](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L30) or pass the API key with ``-A`` argument.
+
+> By default XSS outputs are saved in xss.txt or you can specify the output file
+
 ```
-knoxsser -i input.txt -A API_KEY -o out.txt
+knoxsser -i input.txt -A API_KEY
 ```
 ![poc2](https://github.com/0xPugal/KNOXSSer/assets/75373225/cca324aa-5c35-4018-9e7d-d87a524a31b1)
 ![poc](https://github.com/0xPugal/KNOXSSer/assets/75373225/c12f5b38-f668-4e9f-8c1e-28cda061defc)
@@ -26,6 +33,8 @@ knoxsser -i input.txt -A API_KEY -o out.txt
 ## ToDo
 + Add Parallel scan functionality
 + Properly handle and print error messages from KNOXSS API
++ Add knoxsser to read input from stdin
++ Add option to save the urls which are timedout and skipped due to errors in knoxss api
 
 ## Credits
 + An amazing [KNOXSS](https://knoxss.me/) API by Brute Logic.

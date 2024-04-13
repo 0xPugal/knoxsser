@@ -4,6 +4,7 @@ CYAN='\033[0;36m'
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
+BOLD='\033[1m'
 NC='\033[0m'
 
 print_banner() {
@@ -13,8 +14,8 @@ echo -e "${CYAN}██║ ██╔╝████╗  ██║██╔══�
 echo -e "${CYAN}█████╔╝ ██╔██╗ ██║██║   ██║ ╚███╔╝ ███████╗███████╗█████╗  ██████╔╝ ${NC}"
 echo -e "${CYAN}██╔═██╗ ██║╚██╗██║██║   ██║ ██╔██╗ ╚════██║╚════██║██╔══╝  ██╔══██╗ ${NC}"
 echo -e "${CYAN}██║  ██╗██║ ╚████║╚██████╔╝██╔╝ ██╗███████║███████║███████╗██║  ██║ ${NC}"
-echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝ ${NC}"
-echo -e "     Mass XSS Scanning for profit using KNOXSS API  - 0xPugal       "
+echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v0.2 ${NC}"
+echo -e "${BOLD}                                        Made with <3 by @0xPugal    ${NC}   "
 echo -e ""
 }
 
@@ -27,6 +28,7 @@ fi
 input_file=""
 output_file="xss.txt"
 api_key="API KEY"
+VERSION="v0.2"
 
 usage() {
     print_banner
@@ -34,7 +36,8 @@ usage() {
     echo "  -i, --input     Input file containing URLs to scan"
     echo "  -o, --output    Output file to save XSS results (default: xss.txt)"
     echo "  -A, --api       API key for Knoxss"
-    echo "  -h, --help      Display this help message"
+    echo "  -h, --help      Display this help message and exit"
+    echo "  -v, --version   Display the version and exit"
     exit 1
 }
 
@@ -56,12 +59,16 @@ while [[ $# -gt 0 ]]; do
             shift
             shift
             ;;
+        -v|--version)
+            echo "Version: ${VERSION}"
+            exit 0
+            ;;
         -h|--help)
             usage
             ;;
         *)
             echo "Error: Unknown option: $1"
-            usage
+            exit 0
             ;;
     esac
 done
