@@ -12,7 +12,7 @@ curl -sSL https://raw.githubusercontent.com/0xPugal/KNOXSSer/master/knoxsser -o 
 
 ```
 Options:
-  -i, --input     Input file containing URLs to scan
+  -i, --input     Input file containing URLs or single URL to scan
   -o, --output    Output file to save XSS results (default: xss.txt)
   -A, --api       Pass the KNOXSS API key
   -h, --help      Display this help message and exit
@@ -22,11 +22,16 @@ Options:
 ## Usage
 > Configure your [KNOXSS API KEY](https://knoxss.me/) in [KNOXSSer](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L30) or pass the API key with ``-A`` argument.
 
-> By default XSS outputs are saved in xss.txt or you can specify the output file
+> By default XSS outputs are saved in xss.txt or you can specify the custom output file
++ Single URL scan
+```
+knoxsser -i https://brutelogic.com.br/xss.php?a=1 -A API_KEY
+```
++ Scan a list of URLs
+```
+knoxsser -i urls.txt -A API_KEY
+```
 
-```
-knoxsser -i input.txt -A API_KEY
-```
 ![poc2](https://github.com/0xPugal/KNOXSSer/assets/75373225/cca324aa-5c35-4018-9e7d-d87a524a31b1)
 ![poc](https://github.com/0xPugal/KNOXSSer/assets/75373225/c12f5b38-f668-4e9f-8c1e-28cda061defc)
 
