@@ -1,3 +1,7 @@
++ v0.4
+    - Fix the false positive in API calls. It count increment only happens if the "API Call" field is not "0"
+    - URLs which encountered errors are saved into ``.todo`` file along with reamining URLs
+
 + v0.3
     - Add option to scan single url
     - Decrease the ``sleep 10`` to 2 seconds to speed up the scan
