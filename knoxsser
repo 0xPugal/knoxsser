@@ -105,9 +105,9 @@ else
 fi
 
 handle_ctrl_c() {
-    echo -e "\nCtrl-C detected. remaining URLs and URLs which encountered error are saved into $todo_file..."
+    echo -e "\nCtrl-C detected. remaining URLs are saved into $todo_file..."
     sed -n "${lineno},\$p" "$urls_file" > "$todo_file"
-    echo "Remaining URLs and URLs which encountered error are saved into $todo_file"
+    echo "URLs which encountered error are saved into $error_url"
     echo "Total API calls made: $api_calls"
     exit 1
 }
@@ -117,6 +117,7 @@ trap handle_ctrl_c INT
 lineno=1
 api_calls=0
 todo_file="${urls_file%.*}-$(date +'%Y%m%d%H%M%S').todo"
+error_url="${urls_file%.*}-errors.todo"
 
 if ! $silent_mode; then
     print_banner
@@ -144,9 +145,7 @@ while read line; do
         echo -e "${RED}Forbidden - $line ${NC} [$api_call]"
     else
         echo -e "${RED}KNOXSS error - $line ${NC} [$api_call]"
-        if [[ "$api_call" != "0" ]]; then
-            echo "$line" >> "$todo_file"  # Save URL to todo file
-        fi
+        echo "$line" >> "$error_url"
     fi
     sleep 2
     lineno=$((lineno + 1))
