@@ -15,6 +15,7 @@ Options:
   -i, --input     Input file containing URLs or single URL to scan
   -o, --output    Output file to save XSS results (default: xss.txt)
   -A, --api       Pass the KNOXSS API key
+  -s, --silent    Print only results without displaying the banner
   -h, --help      Display this help message and exit
   -v, --version   Display the version and exit
 ```
