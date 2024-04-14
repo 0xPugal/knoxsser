@@ -3,7 +3,7 @@
 CYAN='\033[0;36m'
 GREEN='\033[0;32m'
 RED='\033[0;31m'
-YELLOW='\033[1;33m'
+YELLOW='\033[0;33m'
 BOLD='\033[1m'
 NC='\033[0m'
 
@@ -15,7 +15,7 @@ echo -e "${CYAN}█████╔╝ ██╔██╗ ██║██║   �
 echo -e "${CYAN}██╔═██╗ ██║╚██╗██║██║   ██║ ██╔██╗ ╚════██║╚════██║██╔══╝  ██╔══██╗ ${NC}"
 echo -e "${CYAN}██║  ██╗██║ ╚████║╚██████╔╝██╔╝ ██╗███████║███████║███████╗██║  ██║ ${NC}"
 echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v0.2 ${NC}"
-echo -e "${BOLD}                                        Made with <3 by @0xPugal    ${NC}   "
+echo -e "${BOLD}                                        Made with ${RED}<3${NC} by @0xPugal    ${NC}   "
 echo -e ""
 }
 
@@ -25,15 +25,16 @@ if [[ $# -eq 0 ]]; then
 fi
 
 # Default values
+input_type="file"
 input_file=""
-output_file="xss.txt"
 api_key="API KEY"
+output_file="xss.txt"
 VERSION="v0.2"
 
 usage() {
     print_banner
     echo "Options:"
-    echo "  -i, --input     Input file containing URLs to scan"
+    echo "  -i, --input     Input file containing URLs or single URL to scan"
     echo "  -o, --output    Output file to save XSS results (default: xss.txt)"
     echo "  -A, --api       API key for Knoxss"
     echo "  -h, --help      Display this help message and exit"
@@ -45,7 +46,15 @@ while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
         -i|--input)
-            input_file="$2"
+            input="$2"
+            if [[ -f "$input" ]]; then
+                input_type="file"
+                input_file="$input"
+            else
+                input_type="url"
+                single_url="$input"
+                single_url=$(echo "$single_url" | sed 's/&/%26/g')
+            fi
             shift
             shift
             ;;
@@ -73,16 +82,25 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [[ -z "$input_file" ]]; then
+if [[ "$input_type" == "file" && -z "$input_file" ]]; then
     echo "Error: Input file not specified"
+    usage
+elif [[ "$input_type" == "url" && -z "$single_url" ]]; then
+    echo "Error: Single URL not specified"
     usage
 fi
 
-sed -i 's/&/%26/g' "$input_file"
+if [[ "$input_type" == "file" ]]; then
+    sed -i 's/&/%26/g' "$input_file"
+    urls_file="$input_file"
+else
+    urls_file=$(mktemp)
+    echo "$single_url" > "$urls_file"
+fi
 
 handle_ctrl_c() {
     echo -e "\nCtrl-C detected. Saving remaining URLs to $todo_file..."
-    sed -n "${lineno},\$p" "$input_file" > "$todo_file"
+    sed -n "${lineno},\$p" "$urls_file" > "$todo_file"
     echo "Remaining URLs saved to $todo_file"
     echo "Total API calls made: $api_calls"
     exit 1
@@ -92,7 +110,7 @@ trap handle_ctrl_c INT
 
 lineno=1
 api_calls=0
-todo_file="${input_file%.*}-$(date +'%Y%m%d%H%M%S').todo"
+todo_file="${urls_file%.*}-$(date +'%Y%m%d%H%M%S').todo"
 
 print_banner
 while read line; do
@@ -113,8 +131,12 @@ while read line; do
     else
         echo -e "${RED}KNOXSS error - $line ${NC} [$api_call]"
     fi
-                sleep 10
+                sleep 2
                 lineno=$((lineno + 1))
-done < "$input_file"
+done < "$urls_file"
 
 echo "Total API calls made: $api_calls"
+
+if [[ "$input_type" == "url" ]]; then
+    rm "$urls_file"
+fi
