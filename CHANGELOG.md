@@ -1,6 +1,7 @@
 + v0.3
     - Add option to scan single url
     - Decrease the ``sleep 10`` to 2 seconds to speed up the scan
+    - Add option to print only results without printing banner(``-s/--silent``)
 
 + v0.2
     - Remove Scanning URL...
