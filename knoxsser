@@ -14,7 +14,7 @@ echo -e "${CYAN}██║ ██╔╝████╗  ██║██╔══�
 echo -e "${CYAN}█████╔╝ ██╔██╗ ██║██║   ██║ ╚███╔╝ ███████╗███████╗█████╗  ██████╔╝ ${NC}"
 echo -e "${CYAN}██╔═██╗ ██║╚██╗██║██║   ██║ ██╔██╗ ╚════██║╚════██║██╔══╝  ██╔══██╗ ${NC}"
 echo -e "${CYAN}██║  ██╗██║ ╚████║╚██████╔╝██╔╝ ██╗███████║███████║███████╗██║  ██║ ${NC}"
-echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v0.3 ${NC}"
+echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v0.4 ${NC}"
 echo -e "${BOLD}                                        Made with ${RED}<3${NC} by @0xPugal    ${NC}   "
 echo -e ""
 }
@@ -27,9 +27,9 @@ fi
 # Default values
 input_type="file"
 input_file=""
-api_key="API KEY"
+api_key="KNOXSS API KEY"
 output_file="xss.txt"
-VERSION="v0.3"
+VERSION="v0.4"
 silent_mode=false
 
 usage() {
@@ -105,9 +105,9 @@ else
 fi
 
 handle_ctrl_c() {
-    echo -e "\nCtrl-C detected. Saving remaining URLs to $todo_file..."
+    echo -e "\nCtrl-C detected. remaining URLs and URLs which encountered error are saved into $todo_file..."
     sed -n "${lineno},\$p" "$urls_file" > "$todo_file"
-    echo "Remaining URLs saved to $todo_file"
+    echo "Remaining URLs and URLs which encountered error are saved into $todo_file"
     echo "Total API calls made: $api_calls"
     exit 1
 }
@@ -124,7 +124,6 @@ fi
 
 while read line; do
     response=$(curl https://api.knoxss.pro -d target="$line" -H "X-API-KEY: $api_key" -s)
-    api_calls=$((api_calls + 1))
     xss=$(jq -r '.XSS' <<< "$response")
     poc=$(jq -r '.PoC' <<< "$response")
     error=$(jq -r '.Error' <<< "$response")
@@ -133,15 +132,24 @@ while read line; do
     if [[ "$xss" == "true" ]]; then
         echo -e "${GREEN}XSS found - $poc ${NC} [$api_call]"
         echo "$response" >> "$output_file"
+        if [[ "$api_call" != "0" ]]; then
+            api_calls=$((api_calls + 1))
+        fi
     elif [[ "$xss" == "false" ]]; then
         echo -e "${YELLOW}No XSS found - $line${NC} [$api_call]"
+        if [[ "$api_call" != "0" ]]; then
+            api_calls=$((api_calls + 1))
+        fi
     elif [[ "$error" == "KNOXSS can't test it (forbidden)" ]]; then
         echo -e "${RED}Forbidden - $line ${NC} [$api_call]"
     else
         echo -e "${RED}KNOXSS error - $line ${NC} [$api_call]"
+        if [[ "$api_call" != "0" ]]; then
+            echo "$line" >> "$todo_file"  # Save URL to todo file
+        fi
     fi
-                sleep 2
-                lineno=$((lineno + 1))
+    sleep 2
+    lineno=$((lineno + 1))
 done < "$urls_file"
 
 echo "Total API calls made: $api_calls"
