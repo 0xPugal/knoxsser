@@ -30,6 +30,7 @@ input_file=""
 api_key="API KEY"
 output_file="xss.txt"
 VERSION="v0.3"
+silent_mode=false
 
 usage() {
     print_banner
@@ -37,6 +38,7 @@ usage() {
     echo "  -i, --input     Input file containing URLs or single URL to scan"
     echo "  -o, --output    Output file to save XSS results (default: xss.txt)"
     echo "  -A, --api       API key for Knoxss"
+    echo "  -s, --silent    Print only results without displaying the banner"
     echo "  -h, --help      Display this help message and exit"
     echo "  -v, --version   Display the version and exit"
     exit 1
@@ -66,6 +68,10 @@ while [[ $# -gt 0 ]]; do
         -A|--api)
             api_key="$2"
             shift
+            shift
+            ;;
+        -s|--silent)
+            silent_mode=true
             shift
             ;;
         -v|--version)
@@ -112,7 +118,10 @@ lineno=1
 api_calls=0
 todo_file="${urls_file%.*}-$(date +'%Y%m%d%H%M%S').todo"
 
-print_banner
+if ! $silent_mode; then
+    print_banner
+fi
+
 while read line; do
     response=$(curl https://api.knoxss.pro -d target="$line" -H "X-API-KEY: $api_key" -s)
     api_calls=$((api_calls + 1))
