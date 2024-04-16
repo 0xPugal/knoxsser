@@ -107,7 +107,6 @@ fi
 handle_ctrl_c() {
     echo -e "\nCtrl-C detected. remaining URLs are saved into $todo_file..."
     sed -n "${lineno},\$p" "$urls_file" > "$todo_file"
-    echo "URLs which encountered error are saved into $error_url"
     echo "Total API calls made: $api_calls"
     exit 1
 }
@@ -151,6 +150,7 @@ while read line; do
     lineno=$((lineno + 1))
 done < "$urls_file"
 
+echo "URLs which encountered error are saved into $error_url"
 echo "Total API calls made: $api_calls"
 
 if [[ "$input_type" == "url" ]]; then
