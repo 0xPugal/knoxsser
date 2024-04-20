@@ -9,7 +9,6 @@ curl -sSL https://raw.githubusercontent.com/0xPugal/KNOXSSer/master/knoxsser -o 
 ```
 
 ## Help
-
 ```
 Options:
   -i, --input     Input file containing URLs or single URL to scan
@@ -19,6 +18,13 @@ Options:
   -h, --help      Display this help message and exit
   -v, --version   Display the version and exit
 ```
+
+## Features
+   - Enables scanning of both single URLs and files containing multiple URLs
+   - Unscanned URLs are saved in a `<input>+date-time.todo` file, providing a record of URLs not successfully scanned along with a timestamp.
+   - URLs that encountered timeouts or errors during scanning, possibly due to issues with the KNOXSS API, are saved in a `<input>-errors.todo` file. 
+   - Successful XSS results are saved by default in `xss.txt`, with their full JSON responses.
+   - Prints the number of API calls made during the scanning process.
 
 ## Usage
 > Configure your [KNOXSS API KEY](https://knoxss.me/) in [KNOXSSer](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L30) or pass the API key with ``-A`` argument.
@@ -32,15 +38,12 @@ knoxsser -i https://brutelogic.com.br/xss.php?a=1 -A API_KEY
 ```
 knoxsser -i urls.txt -A API_KEY
 ```
-
-![poc2](https://github.com/0xPugal/KNOXSSer/assets/75373225/cca324aa-5c35-4018-9e7d-d87a524a31b1)
-![poc](https://github.com/0xPugal/KNOXSSer/assets/75373225/c12f5b38-f668-4e9f-8c1e-28cda061defc)
+![knoxsser](https://github.com/0xPugal/KNOXSSer/assets/75373225/2e9878f5-d81c-479b-9be2-4ab52c3c62cf)
 
 ## ToDo
 + Add Parallel scan functionality
 + Properly handle and print error messages from KNOXSS API
 + Add knoxsser to read input from stdin
-+ Add option to save the urls which are timedout and skipped due to errors in knoxss api
 
 ## Credits
 + An amazing [KNOXSS](https://knoxss.me/) API by Brute Logic.
