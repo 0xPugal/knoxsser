@@ -149,7 +149,10 @@ while read line; do
         echo -e "${RED}XSS not possible - $line${NC} [$api_call]"
 
     elif [[ "$error" == "target connection issues (timeout)" ]]; then
-        echo -e "${RED}Target timeout - $line${NC} [$api_call]"
+        echo -e "${RED}Target connection issues - $line${NC} [$api_call]"
+
+    elif [[ "$error" == "KNOXSS can't finish scan gracefully (reason unknown)" ]]; then
+        echo -e "${RED}can't finish scan gracefully - $line${NC} [$api_call]"
 
     else
         echo -e "${RED}KNOXSS error - $line ${NC} [$api_call]"
