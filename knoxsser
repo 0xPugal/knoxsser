@@ -135,13 +135,22 @@ while read line; do
         if [[ "$api_call" != "0" ]]; then
             api_calls=$((api_calls + 1))
         fi
+
     elif [[ "$xss" == "false" ]]; then
         echo -e "${YELLOW}No XSS found - $line${NC} [$api_call]"
         if [[ "$api_call" != "0" ]]; then
             api_calls=$((api_calls + 1))
         fi
+
     elif [[ "$error" == "KNOXSS can't test it (forbidden)" ]]; then
         echo -e "${RED}Forbidden - $line ${NC} [$api_call]"
+
+    elif [[ "$error" == "Content type of target page can't lead to XSS!" ]]; then
+        echo -e "${RED}XSS not possible - $line${NC} [$api_call]"
+
+    elif [[ "$error" == "target connection issues (timeout)" ]]; then
+        echo -e "${RED}Target timeout - $line${NC} [$api_call]"
+
     else
         echo -e "${RED}KNOXSS error - $line ${NC} [$api_call]"
         echo "$line" >> "$error_url"
