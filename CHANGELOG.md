@@ -1,3 +1,8 @@
++ v0.5
+    - Properly prints the error messages
+      1. ``ERROR: Content type of target page can't lead to XSS!`` -> XSS not possible
+      2. ``target connection issues (timeout)`` -> Target timeout
+
 + v0.4
     - Fix the false positive in API calls. It count increment only happens if the "API Call" field is not "0"
     - URLs which encountered errors are saved into ``${urls_file%.*}-errors.todo`` file
