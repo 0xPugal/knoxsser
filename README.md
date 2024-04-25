@@ -13,7 +13,7 @@ curl -sSL https://raw.githubusercontent.com/0xPugal/KNOXSSer/master/knoxsser -o 
 Options:
   -i, --input     Input file containing URLs or single URL to scan
   -o, --output    Output file to save XSS results (default: xss.txt)
-  -A, --api       Pass the KNOXSS API key
+  -A, --api       API key for Knoxss
   -s, --silent    Print only results without displaying the banner
   -h, --help      Display this help message and exit
   -v, --version   Display the version and exit
@@ -27,23 +27,25 @@ Options:
    - Prints the number of API calls made during the scanning process.
 
 ## Usage
-> Configure your [KNOXSS API KEY](https://knoxss.me/) in [KNOXSSer](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L30) or pass the API key with ``-A`` argument.
+> Configure your [knoxss api key](https://knoxss.me/) in [line 30 of knoxsser](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L30) or pass the API key with ``-A`` argument.
 
 > By default XSS outputs are saved in xss.txt or you can specify the custom output file
 + Single URL scan
 ```
-knoxsser -i https://brutelogic.com.br/xss.php?a=1 -A API_KEY
+knoxsser -i https://brutelogic.com.br/xss.php?a=1
 ```
 + Scan a list of URLs
 ```
-knoxsser -i urls.txt -A API_KEY
+knoxsser -i urls.txt
 ```
 ![knoxsser](https://github.com/0xPugal/KNOXSSer/assets/75373225/2e9878f5-d81c-479b-9be2-4ab52c3c62cf)
 
 ## ToDo
 + Add Parallel scan functionality
 + Properly handle and print error messages from KNOXSS API
-+ Add knoxsser to read input from stdin
++ Allow knoxsser to read input from stdin
++ Add verbose option for verbose output
++ Prints if the provided API key is valid or not and fix the parse error
 
 ## Credits
 + An amazing [KNOXSS](https://knoxss.me/) API by Brute Logic.
