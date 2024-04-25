@@ -29,7 +29,7 @@ input_type="file"
 input_file=""
 api_key="KNOXSS API KEY"
 output_file="xss.txt"
-VERSION="v0.4"
+VERSION="v0.5"
 silent_mode=false
 
 usage() {
