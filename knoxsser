@@ -14,7 +14,7 @@ echo -e "${CYAN}██║ ██╔╝████╗  ██║██╔══�
 echo -e "${CYAN}█████╔╝ ██╔██╗ ██║██║   ██║ ╚███╔╝ ███████╗███████╗█████╗  ██████╔╝ ${NC}"
 echo -e "${CYAN}██╔═██╗ ██║╚██╗██║██║   ██║ ██╔██╗ ╚════██║╚════██║██╔══╝  ██╔══██╗ ${NC}"
 echo -e "${CYAN}██║  ██╗██║ ╚████║╚██████╔╝██╔╝ ██╗███████║███████║███████╗██║  ██║ ${NC}"
-echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v0.5 ${NC}"
+echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v0.6 ${NC}"
 echo -e "${BOLD}                                        Made with ${RED}<3${NC} by @0xPugal    ${NC}   "
 echo -e ""
 }
@@ -27,10 +27,11 @@ fi
 # Default values
 input_type="file"
 input_file=""
-api_key="KNOXSS API KEY"
+api_key="YOUR_KNOXSS_API_KEY"
 output_file="xss.txt"
-VERSION="v0.5"
+VERSION="v0.6"
 silent_mode=false
+use_notify=false
 
 usage() {
     print_banner
@@ -39,6 +40,7 @@ usage() {
     echo "  -o, --output    Output file to save XSS results (default: xss.txt)"
     echo "  -A, --api       API key for Knoxss"
     echo "  -s, --silent    Print only results without displaying the banner"
+    echo "  -n, --nofify    Send notifications on successfull XSSes via notify"
     echo "  -h, --help      Display this help message and exit"
     echo "  -v, --version   Display the version and exit"
     exit 1
@@ -72,6 +74,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         -s|--silent)
             silent_mode=true
+            shift
+            ;;
+        -n|--notify)
+            use_notify=true  # Set the flag to true
             shift
             ;;
         -v|--version)
@@ -130,32 +136,36 @@ while read line; do
     api_call=$(jq -r '.["API Call"]' <<< "$response")
 
     if [[ "$xss" == "true" ]]; then
-        echo -e "${GREEN}XSS found - $poc ${NC} [$api_call]"
+        echo -e "${GREEN}[XSS!] - $poc ${NC} [$api_call]"
         echo "$response" >> "$output_file"
-        if [[ "$api_call" != "0" ]]; then
-            api_calls=$((api_calls + 1))
+
+        if  [[ "$use_notify" == true ]]; then
+                echo "$poc" | notify -silent > /dev/null 2>&1 
+                if [[ "$api_call" != "0" ]]; then
+                        api_calls=$((api_calls + 1))
+                fi
         fi
 
     elif [[ "$xss" == "false" ]]; then
-        echo -e "${YELLOW}No XSS found - $line${NC} [$api_call]"
+        echo -e "${YELLOW}[No XSS] - $line${NC} [$api_call]"
         if [[ "$api_call" != "0" ]]; then
             api_calls=$((api_calls + 1))
         fi
 
     elif [[ "$error" == "KNOXSS can't test it (forbidden)" ]]; then
-        echo -e "${RED}Forbidden - $line ${NC} [$api_call]"
+        echo -e "${RED}[ERR] - $line - Forbidden ${NC} [$api_call]"
 
     elif [[ "$error" == "Content type of target page can't lead to XSS!" ]]; then
-        echo -e "${RED}XSS not possible - $line${NC} [$api_call]"
+        echo -e "${RED}[ERR] - $line - XSS not possible ${NC} [$api_call]"
 
     elif [[ "$error" == "target connection issues (timeout)" ]]; then
-        echo -e "${RED}Target connection issues - $line${NC} [$api_call]"
+        echo -e "${RED}[ERR] - $line - Target connection issues ${NC} [$api_call]"
 
     elif [[ "$error" == "KNOXSS can't finish scan gracefully (reason unknown)" ]]; then
-        echo -e "${RED}can't finish scan gracefully - $line${NC} [$api_call]"
+        echo -e "${RED}[ERR] - $line - can't finish scan gracefully${NC} [$api_call]"
 
     else
-        echo -e "${RED}KNOXSS error - $line ${NC} [$api_call]"
+        echo -e "${RED}[ERR] - $line - KNOXSS ERROR(Unknown) ${NC} [$api_call]"
         echo "$line" >> "$error_url"
     fi
     sleep 2
