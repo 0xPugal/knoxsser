@@ -15,7 +15,7 @@ Options:
   -o, --output    Output file to save XSS results (default: xss.txt)
   -A, --api       API key for Knoxss
   -s, --silent    Print only results without displaying the banner
-  -n, --nofify    Send notifications on successfull XSSes via notify
+  -n, --notify    Send notifications on successful XSSes via notify
   -h, --help      Display this help message and exit
   -v, --version   Display the version and exit
 ```
