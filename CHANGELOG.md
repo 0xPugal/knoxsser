@@ -1,3 +1,7 @@
++ v0.6
+    - Send notifications on successfull XSSes via notify
+    - Beautify the way of printing output from knoxss in terminal
+
 + v0.5
     - Properly prints the error messages
       1. ``ERROR: Content type of target page can't lead to XSS!`` -> XSS not possible
