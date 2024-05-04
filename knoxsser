@@ -40,7 +40,7 @@ usage() {
     echo "  -o, --output    Output file to save XSS results (default: xss.txt)"
     echo "  -A, --api       API key for Knoxss"
     echo "  -s, --silent    Print only results without displaying the banner"
-    echo "  -n, --nofify    Send notifications on successfull XSSes via notify"
+    echo "  -n, --notify    Send notifications on successful XSSes via notify"
     echo "  -h, --help      Display this help message and exit"
     echo "  -v, --version   Display the version and exit"
     exit 1
