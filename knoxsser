@@ -178,13 +178,14 @@ while read -r line; do
             fi
         
         elif [[ "$error" == "KNOXSS can't test it (forbidden)" ]]; then
-        echo -e "${RED}[ERR] - $line - Forbidden ${NC} [$api_call]"
+            echo -e "${RED}[ERR] - $line - Forbidden ${NC} [$api_call]"
 
         elif [[ "$error" == "target connection issues (timeout)" ]]; then
-        echo -e "${RED}[ERR] - $line - Target connection issues ${NC} [$api_call]"
+            echo -e "${RED}[ERR] - $line - Target connection issues ${NC} [$api_call]"
 
         elif [[ "$error" == "KNOXSS can't finish scan gracefully (reason unknown)" ]]; then
-        echo -e "${RED}[ERR] - $line - can't finish scan gracefully${NC} [$api_call]"
+            echo -e "${RED}[ERR] - $line - can't finish scan gracefully${NC} [$api_call]"
+            echo "$line" >> "$error_url"
 
         else
             echo -e "${RED}[ERR] - Unknown error ${NC} [$api_call]"
