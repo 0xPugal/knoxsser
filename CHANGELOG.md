@@ -1,3 +1,7 @@
++ v0.7
+    - Fix the json jq parse error while the url content type is not vulnerable to xss
+    - Fix the json parse error when the provided api key is invalid
+
 + v0.6
     - Send notifications on successfull XSSes via notify
     - Beautify the way of printing output from knoxss in terminal
