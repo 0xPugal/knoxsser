@@ -1,5 +1,5 @@
 # KNOXSSer
-**A concise and effective bash script for mass XSS scanning utilizing the KN0X55 API by Brute Logic**
+**A concise and effective bash script for mass XSS scanning utilizing the KNOXSS API by Brute Logic**
 
 <img src=KNOXSSer.png>
 
@@ -29,7 +29,7 @@ Options:
    - Send notifications on successful XSSes through notify
 
 ## Usage
-> Configure your [knoxss api key](https://knoxss.me/) in [line 30 of knoxsser](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L30) or pass the API key with ``-A`` argument.
+> Configure your [knoxss api key](https://knoxss.me/) in [line 30 of knoxsser](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L30) or pass the API key with ``-A`` argument. (Required)
 
 > By default XSS outputs are saved in xss.txt or you can specify the custom output file
 
@@ -43,14 +43,16 @@ knoxsser -i https://brutelogic.com.br/xss.php?a=1
 ```
 knoxsser -i urls.txt
 ```
++ Send the notification on successful xss through notify
+```
+knoxsser -i input.txt --notify
+```
 ![knoxsser](https://github.com/0xPugal/KNOXSSer/assets/75373225/2e9878f5-d81c-479b-9be2-4ab52c3c62cf)
 
 ## ToDo
 + Add Parallel scan functionality
-+ Properly handle and print error messages from KNOXSS API
 + Allow knoxsser to read input from stdin
 + Add verbose option for verbose output
-+ Prints if the provided API key is valid or not and fix the parse error
 
 ## Credits
 + An amazing [KNOXSS](https://knoxss.me/) API by Brute Logic.
