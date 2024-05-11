@@ -127,7 +127,6 @@ trap handle_ctrl_c INT
 lineno=1
 api_calls=0
 todo_file="${urls_file%.*}-$(date +'%Y%m%d%H%M%S').todo"
-error_url="${urls_file%.*}-errors.todo"
 
 # Display banner unless in silent mode
 if ! $silent_mode; then
@@ -185,11 +184,11 @@ while read -r line; do
 
         elif [[ "$error" == "KNOXSS can't finish scan gracefully (reason unknown)" ]]; then
             echo -e "${RED}[ERR] - $line - can't finish scan gracefully${NC} [$api_call]"
-            echo "$line" >> "$error_url"
+            echo "$line" >> "$todo_file"
 
         else
-            echo -e "${RED}[ERR] - Unknown error ${NC} [$api_call]"
-            echo "$line" >> "$error_url"
+            echo -e "${RED}[ERR] - $line - Unknown error ${NC} [$api_call]"
+            echo "$line" >> "$todo_file"
         fi
     fi
 
@@ -198,7 +197,7 @@ while read -r line; do
 done < "$urls_file"
 
 # Final summary
-echo "If any URLs that encountered errors are saved into $error_url"
+echo "If any URLs that encountered errors are saved into $todo_file"
 echo "Total API calls made: $api_calls"
 
 # Cleanup temporary files if needed
