@@ -1,3 +1,6 @@
++ v0.8
+    - Fix the error of printing the url in unknown error
+    - Change the ``error_url`` to ``todo_file`` to save the both unscanned urls and error urls
 + v0.7
     - Fix the json jq parse error while the url content type is not vulnerable to xss
     - Fix the json parse error when the provided api key is invalid
