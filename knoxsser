@@ -14,7 +14,7 @@ print_banner() {
     echo -e "${CYAN}█████╔╝ ██╔██╗ ██║██║   ██║ ╚███╔╝ ███████╗███████╗█████╗  ██████╔╝ ${NC}"
     echo -e "${CYAN}██╔═██╗ ██║╚██╗██║██║   ██║ ██╔██╗ ╚════██║╚════██║██╔══╝  ██╔══██╗ ${NC}"
     echo -e "${CYAN}██║  ██╗██║ ╚████║╚██████╔╝██╔╝ ██╗███████║███████║███████╗██║  ██║ ${NC}"
-    echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v0.8 ${NC}"
+    echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v0.9 ${NC}"
     echo -e "${BOLD}                                        Made with ${RED}<3${NC} by @0xPugal    ${NC}"
     echo ""
 }
@@ -29,10 +29,10 @@ input_type="file"
 input_file=""
 api_key="YOUR_KNOXSS_API_KEY"
 output_file="xss.txt"
-VERSION="v0.8"
+VERSION="v0.9"
 silent_mode=false
 use_notify=false
-parallel=1  # Default to scan one URL at a time
+parallel=3  # Default to scan one URL at a time
 
 usage() {
     print_banner
@@ -42,7 +42,7 @@ usage() {
     echo "  -A, --api       API key for Knoxss"
     echo "  -s, --silent    Print only results without displaying the banner"
     echo "  -n, --notify    Send notifications on successful XSSes via notify"
-    echo "  -p, --process   Number of URLs to scan parallely (1-5)"
+    echo "  -p, --process   Number of URLs to scan parallely(1-5) (default: 3)"
     echo "  -h, --help      Display this help message and exit"
     echo "  -v, --version   Display the version and exit"
     exit 1
