@@ -32,6 +32,7 @@ output_file="xss.txt"
 VERSION="v0.8"
 silent_mode=false
 use_notify=false
+parallel=1  # Default to scan one URL at a time
 
 usage() {
     print_banner
@@ -41,6 +42,7 @@ usage() {
     echo "  -A, --api       API key for Knoxss"
     echo "  -s, --silent    Print only results without displaying the banner"
     echo "  -n, --notify    Send notifications on successful XSSes via notify"
+    echo "  -p, --process   Number of URLs to scan parallely (1-5)"
     echo "  -h, --help      Display this help message and exit"
     echo "  -v, --version   Display the version and exit"
     exit 1
@@ -78,7 +80,16 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         -n|--notify)
-            use_notify=true  
+            use_notify=true
+            shift
+            ;;
+        -p|--process)
+            parallel="$2"
+            if ! [[ "$parallel" =~ ^[1-5]$ ]]; then
+                echo "Error: Invalid value for parallel processing. Choose between 1 to 5."
+                usage
+            fi
+            shift
             shift
             ;;
         -v|--version)
@@ -141,60 +152,74 @@ if [[ "$test_response" == "Invalid or expired API key." ]]; then
     exit 1
 fi
 
+# Count the number of URLs in the file
+num_urls=$(wc -l < "$urls_file")
+echo -e "${CYAN}${BOLD}Scanning $num_urls URLs for XSS...${NC}"
+
 # Main loop to scan URLs
 while read -r line; do
-    response=$(curl "https://api.knoxss.pro" -d target="$line" -H "X-API-KEY: $api_key" -s)
+    (
+        response=$(curl "https://api.knoxss.pro" -d target="$line" -H "X-API-KEY: $api_key" -s)
 
-    if [[ "$response" == *"Invalid or expired API key."* ]]; then
-        echo -e "${RED}Invalid or expired API key. Exiting.${NC}"
-        exit 1
-    
-    elif [[ "$response" == *"<p"* ]]; then
+        if [[ "$response" == *"Invalid or expired API key."* ]]; then
+            echo -e "${RED}Invalid or expired API key. Exiting.${NC}"
+            exit 1
+
+        elif [[ "$response" == *"<p"* ]]; then
             echo -e "${RED}[ERR] - $line - XSS is not possible in this content-type${NC} [$api_call]"
 
-    else
-        xss=$(jq -r '.XSS' <<< "$response")
-        poc=$(jq -r '.PoC' <<< "$response")
-        error=$(jq -r '.Error' <<< "$response")
-        api_call=$(jq -r '.["API Call"]' <<< "$response")
+        else
+            xss=$(jq -r '.XSS' <<< "$response")
+            poc=$(jq -r '.PoC' <<< "$response")
+            error=$(jq -r '.Error' <<< "$response")
+            api_call=$(jq -r '.["API Call"]' <<< "$response")
 
-        # Handle XSS detection
-        if [[ "$xss" == "true" ]]; then
-            echo -e "${GREEN}[XSS!] - $poc ${NC} [$api_call]"
-            echo "$response" >> "$output_file"
+            # Handle XSS detection
+            if [[ "$xss" == "true" ]]; then
+                echo -e "${GREEN}[XSS!] - $poc ${NC} [$api_call]"
+                echo "$response" >> "$output_file"
 
-            if [[ "$use_notify" == true ]]; then
-                echo "$poc" | notify -silent > /dev/null 2>&1 
+                if [[ "$use_notify" == true ]]; then
+                    echo "$poc" | notify -silent > /dev/null 2>&1
+                    if [[ "$api_call" != "0" ]]; then
+                        api_calls=$((api_calls + 1))
+                    fi
+                fi
+
+            elif [[ "$xss" == "false" ]]; then
+                echo -e "${YELLOW}[No XSS] - $line ${NC} [$api_call]"
                 if [[ "$api_call" != "0" ]]; then
                     api_calls=$((api_calls + 1))
                 fi
+
+            elif [[ "$error" == "KNOXSS can't test it (forbidden)" ]]; then
+                echo -e "${RED}[ERR] - $line - Forbidden ${NC} [$api_call]"
+
+            elif [[ "$error" == "target connection issues (timeout)" ]]; then
+                echo -e "${RED}[ERR] - $line - Target connection issues ${NC} [$api_call]"
+
+            elif [[ "$error" == "KNOXSS can't finish scan gracefully (reason unknown)" ]]; then
+                echo -e "${RED}[ERR] - $line - can't finish scan gracefully${NC} [$api_call]"
+                echo "$line" >> "$todo_file"
+
+            else
+                echo -e "${RED}[ERR] - $line - Unknown error ${NC} [$api_call]"
+                echo "$line" >> "$todo_file"
             fi
-
-        elif [[ "$xss" == "false" ]]; then
-            echo -e "${YELLOW}[No XSS] - $line ${NC} [$api_call]"
-            if [[ "$api_call" != "0" ]]; then
-                api_calls=$((api_calls + 1))
-            fi
-        
-        elif [[ "$error" == "KNOXSS can't test it (forbidden)" ]]; then
-            echo -e "${RED}[ERR] - $line - Forbidden ${NC} [$api_call]"
-
-        elif [[ "$error" == "target connection issues (timeout)" ]]; then
-            echo -e "${RED}[ERR] - $line - Target connection issues ${NC} [$api_call]"
-
-        elif [[ "$error" == "KNOXSS can't finish scan gracefully (reason unknown)" ]]; then
-            echo -e "${RED}[ERR] - $line - can't finish scan gracefully${NC} [$api_call]"
-            echo "$line" >> "$todo_file"
-
-        else
-            echo -e "${RED}[ERR] - $line - Unknown error ${NC} [$api_call]"
-            echo "$line" >> "$todo_file"
         fi
+    ) &
+
+    # Limit number of parallel processes based on user input
+    if [[ $(jobs -r -p | wc -l) -ge "$parallel" ]]; then
+        wait -n
     fi
 
     sleep 2  # Delay between API calls to avoid rate limiting
     lineno=$((lineno + 1))
 done < "$urls_file"
+
+# Wait for all remaining background processes to finish
+wait
 
 # Final summary
 echo "If any URLs that encountered errors are saved into $todo_file"
