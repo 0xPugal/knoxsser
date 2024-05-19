@@ -1,4 +1,4 @@
-# KNOXSSer
+# KNOXSSer v0.9
 **A concise and effective bash script for mass XSS scanning utilizing the KNOXSS API by Brute Logic**
 
 <img src=KNOXSSer.png>
@@ -16,6 +16,7 @@ Options:
   -A, --api       API key for Knoxss
   -s, --silent    Print only results without displaying the banner
   -n, --notify    Send notifications on successful XSSes via notify
+  -p, --process   Number of URLs to scan parallely (1-5) (default: 3)
   -h, --help      Display this help message and exit
   -v, --version   Display the version and exit
 ```
@@ -27,6 +28,7 @@ Options:
    - Successful XSS results are saved by default in `xss.txt`, with their full JSON responses.
    - Prints the number of API calls made during the scanning process.
    - Send notifications on successful XSSes through notify
+   - Parallel scans options for faster scan completion
 
 ## Usage
 > Configure your [knoxss api key](https://knoxss.me/) in [line 30 of knoxsser](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L30) or pass the API key with ``-A`` argument. (Required)
@@ -50,11 +52,10 @@ knoxsser -i input.txt --notify
 ![knoxsser](https://github.com/0xPugal/KNOXSSer/assets/75373225/2e9878f5-d81c-479b-9be2-4ab52c3c62cf)
 
 ## ToDo
-+ Add Parallel scan functionality
 + Allow knoxsser to read input from stdin
 + Add verbose option for verbose output
 
 ## Credits
 + An amazing [KNOXSS](https://knoxss.me/) API by Brute Logic.
 + This script was inspired from the [knoxnl](https://github.com/xnl-h4ck3r/knoxnl) tool by [xnl_h4ck3r](https://twitter.com/xnl_h4ck3r).
-+ Send Notification via [Project Discovery](https://github.com/projectdiscovery)'s [Notify](https://github.com/projectdiscovery/notify) 
++ Notify on successful XSS via [Project Discovery](https://github.com/projectdiscovery)'s [Notify](https://github.com/projectdiscovery/notify) 
