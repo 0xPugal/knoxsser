@@ -32,7 +32,7 @@ output_file="xss.txt"
 VERSION="v0.9"
 silent_mode=false
 use_notify=false
-parallel=3  # Default to scan one URL at a time
+parallel=1  # Default to scan one URL at a time
 
 usage() {
     print_banner
@@ -42,7 +42,7 @@ usage() {
     echo "  -A, --api       API key for Knoxss"
     echo "  -s, --silent    Print only results without displaying the banner"
     echo "  -n, --notify    Send notifications on successful XSSes via notify"
-    echo "  -p, --process   Number of URLs to scan parallely(1-5) (default: 3)"
+    echo "  -p, --process   Number of URLs to scan parallely(1-5) (default: 1)"
     echo "  -h, --help      Display this help message and exit"
     echo "  -v, --version   Display the version and exit"
     exit 1
@@ -123,17 +123,6 @@ else
     urls_file=$(mktemp)
     echo "$single_url" > "$urls_file"
 fi
-
-# Function to handle Ctrl-C interruptions
-handle_ctrl_c() {
-    echo -e "\nCtrl-C detected. Remaining URLs are saved into $todo_file..."
-    sed -n "${lineno},\$p" "$urls_file" > "$todo_file"
-    echo "Total API calls made: $api_calls"
-    exit 1
-}
-
-# Set up Ctrl-C handler
-trap handle_ctrl_c INT
 
 lineno=1
 api_calls=0
@@ -223,7 +212,6 @@ wait
 
 # Final summary
 echo "If any URLs that encountered errors are saved into $todo_file"
-echo "Total API calls made: $api_calls"
 
 # Cleanup temporary files if needed
 if [[ "$input_type" == "url" ]]; then
