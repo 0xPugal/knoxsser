@@ -14,7 +14,7 @@ print_banner() {
     echo -e "${CYAN}█████╔╝ ██╔██╗ ██║██║   ██║ ╚███╔╝ ███████╗███████╗█████╗  ██████╔╝ ${NC}"
     echo -e "${CYAN}██╔═██╗ ██║╚██╗██║██║   ██║ ██╔██╗ ╚════██║╚════██║██╔══╝  ██╔══██╗ ${NC}"
     echo -e "${CYAN}██║  ██╗██║ ╚████║╚██████╔╝██╔╝ ██╗███████║███████║███████╗██║  ██║ ${NC}"
-    echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v0.9 ${NC}"
+    echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v1.0 ${NC}"
     echo -e "${BOLD}                                        Made with ${RED}<3${NC} by @0xPugal    ${NC}"
     echo ""
 }
@@ -29,7 +29,7 @@ input_type="file"
 input_file=""
 api_key="YOUR_KNOXSS_API_KEY"
 output_file="xss.txt"
-VERSION="v0.9"
+VERSION="v1.0"
 silent_mode=false
 use_notify=false
 parallel=1  # Default to scan one URL at a time
