@@ -1,4 +1,4 @@
-# KNOXSSer v0.9
+# KNOXSSer v1.0
 **A concise and effective bash script for mass XSS scanning utilizing the KNOXSS API by Brute Logic**
 
 <img src=KNOXSSer.png>
