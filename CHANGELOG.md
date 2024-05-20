@@ -1,3 +1,7 @@
++ v1.0
+    - Temporarily removed ``Ctrl-C`` option to stop and save remaining urls due to some errors
+    - Temporarily removed ``$api_calls`` option due to some errors
+
 + v0.9
     - Add parallel scan functionality
     - Prints number of urls are in a input file to scan
