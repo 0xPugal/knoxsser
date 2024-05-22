@@ -1,3 +1,8 @@
++ v1.1
+    - Add ``Ctrl-C`` option to stop the scan and save remaining urls in a ``todo_file``
+    - Modify script to save urls which encounter erros due to error in knoxss api are saved in ``{urls_file}.error`` file
+    - Beautify the way of printing output from knoxss in terminal
+
 + v1.0
     - Temporarily removed ``Ctrl-C`` option to stop and save remaining urls due to some errors
     - Temporarily removed ``$api_calls`` option due to some errors
