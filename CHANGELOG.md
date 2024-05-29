@@ -1,3 +1,6 @@
++ v1.2
+    - Add verbose option for printing response from knoxss api in the terminal
+
 + v1.1
     - Add ``Ctrl-C`` option to stop the scan and save remaining urls in a ``todo_file``
     - Modify script to save urls which encounter erros due to error in knoxss api are saved in ``{urls_file}.error`` file
