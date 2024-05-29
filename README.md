@@ -1,4 +1,4 @@
-# KNOXSSer v1.1
+# KNOXSSer v1.2
 
 [![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/) [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/0xPugal/KNOXSSer/graphs/commit-activity) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/0xPugal/KNOXSSer) [![Latest release](https://badgen.net/github/release/0xPugal/KNOXSSer)](https://github.com/0xPugal/KNOXSSer/releases)
 
@@ -20,9 +20,10 @@ Options:
   -A, --api       API key for Knoxss
   -s, --silent    Print only results without displaying the banner
   -n, --notify    Send notifications on successful XSSes via notify
-  -p, --process   Number of URLs to scan parallely (1-5) (default: 1)
-  -h, --help      Display this help message and exit
+  -p, --process   Number of URLs to scan parallely(1-5) (default: 1)
   -v, --version   Display the version and exit
+  -V, --verbose   Enable verbose output
+  -h, --help      Display this help message and exit
 ```
 
 ## Features
@@ -33,6 +34,7 @@ Options:
    - Prints the number of API calls made during the scanning process.
    - Send notifications on successful XSSes through notify
    - Parallel scans options for faster scan completion
+   - Verbose option functionality for printing response from knoxss api in the terminal
 
 ## Usage
 > Configure your [knoxss api key](https://knoxss.me/) in [line 30 of knoxsser](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L30) or pass the API key with ``-A`` argument. (Required)
@@ -41,24 +43,27 @@ Options:
 
 > [Notify](https://github.com/projectdiscovery/notify) must be installed on your system, to send notifications on sucessful xss. Use ``--notify`` to send notifications
 
-+ Single URL scan
 ```
-knoxsser -i https://brutelogic.com.br/xss.php?a=1
-```
-+ Scan a list of URLs
-```
-knoxsser -i urls.txt
-```
-+ Send the notification on successful xss through notify
-```
-knoxsser -i input.txt --notify
+# Single URL scan
+  knoxsser --input https://brutelogic.com.br/xss.php?a=1
+
+# Scan a list of URLs
+  knoxsser --input urls.txt
+
+# Send the notification on successful xss through notify
+  knoxsser --input input.txt --notify
+
+# Verbose option functionality
+  knoxsser --input input.txt --verbose
+
+# Parallel scan process
+  knoxsser --input input.txt --process 3
 ```
 ![knoxsser](https://github.com/0xPugal/KNOXSSer/assets/75373225/0b97af75-e1c8-410c-b4d3-8a555f0bb599)
 
 
 ## ToDo
 + Allow knoxsser to read input from stdin
-+ Add verbose option for verbose output
 
 ## Credits
 + An amazing [KNOXSS](https://knoxss.me/) API by Brute Logic.

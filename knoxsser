@@ -14,7 +14,7 @@ print_banner() {
     echo -e "${CYAN}█████╔╝ ██╔██╗ ██║██║   ██║ ╚███╔╝ ███████╗███████╗█████╗  ██████╔╝ ${NC}"
     echo -e "${CYAN}██╔═██╗ ██║╚██╗██║██║   ██║ ██╔██╗ ╚════██║╚════██║██╔══╝  ██╔══██╗ ${NC}"
     echo -e "${CYAN}██║  ██╗██║ ╚████║╚██████╔╝██╔╝ ██╗███████║███████║███████╗██║  ██║ ${NC}"
-    echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v1.1 ${NC}"
+    echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v1.2 ${NC}"
     echo -e "${BOLD}                                        Made with ${RED}<3${NC} by @0xPugal    ${NC}"
     echo ""
 }
@@ -29,10 +29,11 @@ input_type="file"
 input_file=""
 api_key="YOUR_KNOXSS_API_KEY"
 output_file="xss.txt"
-VERSION="v1.1"
+VERSION="v1.2"
 silent_mode=false
 use_notify=false
 parallel_processes=1
+verbose_mode=false
 
 usage() {
     print_banner
@@ -43,8 +44,9 @@ usage() {
     echo "  -s, --silent    Print only results without displaying the banner"
     echo "  -n, --notify    Send notifications on successful XSSes via notify"
     echo "  -p, --process   Number of URLs to scan parallely(1-5) (default: 1)"
-    echo "  -h, --help      Display this help message and exit"
     echo "  -v, --version   Display the version and exit"
+    echo "  -V, --verbose   Enable verbose output"
+    echo "  -h, --help      Display this help message and exit"
     exit 1
 }
 
@@ -80,7 +82,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         -n|--notify)
-            use_notify=true  
+            use_notify=true
             shift
             ;;
         -p|--process)
@@ -91,6 +93,10 @@ while [[ $# -gt 0 ]]; do
         -v|--version)
             echo "Version: ${VERSION}"
             exit 0
+            ;;
+        -V|--verbose)
+            verbose_mode=true
+            shift
             ;;
         -h|--help)
             usage
@@ -124,8 +130,8 @@ fi
 handle_ctrl_c() {
     echo -e "\n${BOLD}Ctrl-C detected. Remaining URLs are saved into $todo_file...${NC}"
     grep -vFf "$processed_file" "$urls_file" > "$todo_file"
-    rm -f "$processed_file" 
-exit 1
+    rm -f "$processed_file"
+    exit 1
 }
 
 # Set up Ctrl-C handler
@@ -157,21 +163,22 @@ fi
 process_url() {
     local line="$1"
     local lineno="$2"
-    
+
     response=$(curl "https://api.knoxss.pro" -d target="$line" -H "X-API-KEY: $api_key" -s)
 
     if [[ "$response" == *"Invalid or expired API key."* ]]; then
         echo -e "${RED}Invalid or expired API key. Exiting.${NC}"
         exit 1
-    
+
     elif [[ "$response" == *"<p"* ]]; then
         echo -e "${RED}[ NOPE ] - $line - XSS is not possible in this content-type${NC} [0]"
-    
+
     else
         xss=$(jq -r '.XSS' <<< "$response")
         poc=$(jq -r '.PoC' <<< "$response")
         error=$(jq -r '.Error' <<< "$response")
         api_call=$(jq -r '.["API Call"]' <<< "$response")
+
 
         # Handle XSS detection
         if [[ "$xss" == "true" ]]; then
@@ -179,7 +186,7 @@ process_url() {
             echo "$response" >> "$output_file"
 
             if [[ "$use_notify" == true ]]; then
-                echo "$poc" | notify -silent > /dev/null 2>&1 
+                echo "$poc" | notify -silent > /dev/null 2>&1
                 if [[ "$api_call" != "0" ]]; then
                     api_calls=$((api_calls + 1))
                 fi
@@ -190,7 +197,7 @@ process_url() {
             if [[ "$api_call" != "0" ]]; then
                 api_calls=$((api_calls + 1))
             fi
-        
+
         elif [[ "$error" == "KNOXSS can't test it (forbidden)" ]]; then
             echo -e "${RED}[ 403:( ] - $line - Forbidden ${NC} [$api_call]"
 
@@ -204,6 +211,11 @@ process_url() {
         else
             echo -e "${RED}[ERR] - $line - Unknown error ${NC} [$api_call]"
             echo "$line" >> "$error_file"
+        fi
+
+        if $verbose_mode; then
+            echo -e "${BOLD}Verbose Output:${NC}"
+            echo "$response" | jq .
         fi
     fi
 
