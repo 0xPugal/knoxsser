@@ -1,3 +1,8 @@
++ v1.3
+    - Print Service unavailable message form KNOXSS API
+    - Add verbose mode also for Unknown errors
+    - Add urlencode for ``+`` to ``%2B``
+
 + v1.2
     - Add verbose option for printing response from knoxss api in the terminal
 
