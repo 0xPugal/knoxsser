@@ -63,6 +63,7 @@ while [[ $# -gt 0 ]]; do
                 input_type="url"
                 single_url="$input"
                 single_url=$(echo "$single_url" | sed 's/&/%26/g')
+		single_url=$(echo "$single_url" | sed 's/+/%2B/g')
             fi
             shift
             shift
@@ -120,6 +121,7 @@ fi
 # Set up URLs for scanning based on input type
 if [[ "$input_type" == "file" ]]; then
     sed -i 's/&/%26/g' "$input_file"
+    sed -i 's/+/%2B/g' "$input_file"
     urls_file="$input_file"
 else
     urls_file=$(mktemp)
