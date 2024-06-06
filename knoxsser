@@ -14,9 +14,15 @@ print_banner() {
     echo -e "${CYAN}█████╔╝ ██╔██╗ ██║██║   ██║ ╚███╔╝ ███████╗███████╗█████╗  ██████╔╝ ${NC}"
     echo -e "${CYAN}██╔═██╗ ██║╚██╗██║██║   ██║ ██╔██╗ ╚════██║╚════██║██╔══╝  ██╔══██╗ ${NC}"
     echo -e "${CYAN}██║  ██╗██║ ╚████║╚██████╔╝██╔╝ ██╗███████║███████║███████╗██║  ██║ ${NC}"
-    echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v1.3 ${NC}"
+    echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v1.4 ${NC}"
     echo -e "${BOLD}                                        Made with ${RED}<3${NC} by @0xPugal    ${NC}"
     echo ""
+}
+
+target_count() {
+    if ! $silent_mode; then
+        echo -e "${BOLD}Scanning $(wc -l < "$urls_file") urls for XSS...${NC}\n"
+    fi
 }
 
 if [[ $# -eq 0 ]]; then
@@ -29,7 +35,7 @@ input_type="file"
 input_file=""
 api_key="YOUR_KNOXSS_API_KEY"
 output_file="xss.txt"
-VERSION="v1.3"
+VERSION="v1.4"
 silent_mode=false
 use_notify=false
 parallel_processes=1
@@ -41,7 +47,7 @@ usage() {
     echo "  -i, --input     Input file containing URLs or single URL to scan"
     echo "  -o, --output    Output file to save XSS results (default: xss.txt)"
     echo "  -A, --api       API key for Knoxss"
-    echo "  -s, --silent    Print only results without displaying the banner"
+    echo "  -s, --silent    Print only results without displaying the banner and target count"
     echo "  -n, --notify    Send notifications on successful XSSes via notify"
     echo "  -p, --process   Number of URLs to scan parallely(1-5) (default: 1)"
     echo "  -v, --version   Display the version and exit"
@@ -63,7 +69,7 @@ while [[ $# -gt 0 ]]; do
                 input_type="url"
                 single_url="$input"
                 single_url=$(echo "$single_url" | sed 's/&/%26/g')
-		single_url=$(echo "$single_url" | sed 's/+/%2B/g')
+                single_url=$(echo "$single_url" | sed 's/+/%2B/g')
             fi
             shift
             shift
@@ -130,7 +136,7 @@ fi
 
 # Function to handle Ctrl-C interruptions
 handle_ctrl_c() {
-    echo -e "\n${BOLD}Ctrl-C detected. Remaining URLs are saved into $todo_file...${NC}"
+    echo -e "\n${BOLD}Ctrl-C detected. Remaining URLs are saved into $todo_file${NC}"
     grep -vFf "$processed_file" "$urls_file" > "$todo_file"
     rm -f "$processed_file" 
     exit 1
@@ -145,19 +151,21 @@ todo_file="${urls_file}-$(date +'%Y%m%d%H%M%S').todo"
 processed_file="${urls_file}-$(date +'%Y%m%d%H%M%S').processed"
 error_file="${urls_file}.errors.todo"
 
-# Displaying banner
+# Displaying banner and target count
 if ! $silent_mode; then
     print_banner
+    target_count
 fi
-
-# Print the number of targets to scan
-echo -e "${BOLD}Scanning $(wc -l < "$urls_file") targets for XSS...${NC}\n"
 
 # Check for a valid API key
 test_response=$(curl "https://api.knoxss.pro" -d target="https://example.com" -H "X-API-KEY: $api_key" -s)
 
 if [[ "$test_response" == "Invalid or expired API key." ]]; then
     echo -e "${RED}Invalid or expired API key. Exiting.${NC}"
+    if $verbose_mode; then
+        echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+        echo "$test_response"
+    fi
     exit 1
 fi
 
@@ -170,10 +178,18 @@ process_url() {
 
     if [[ "$response" == *"Invalid or expired API key."* ]]; then
         echo -e "${RED}Invalid or expired API key. Exiting.${NC}"
+        if $verbose_mode; then
+            echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+            echo "$response"
+        fi
         exit 1
     
     elif [[ "$response" == *"<p"* ]]; then
         echo -e "${RED}[ NOPE/ ] - $line - XSS is not possible in this content-type${NC} [0]"
+        if $verbose_mode; then
+            echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+            echo "$response"
+        fi
     
     else
         xss=$(jq -r '.XSS' <<< "$response")
@@ -233,12 +249,12 @@ process_url() {
 
 # Setup for parallel processing
 export -f process_url
-export api_key output_file use_notify todo_file processed_file error_file CYAN GREEN RED YELLOW BOLD NC
+export api_key output_file use_notify todo_file processed_file error_file verbose_mode CYAN GREEN RED YELLOW BOLD NC
 
 # Start processing URLs in parallel
 parallel -j "$parallel_processes" process_url :::: "$urls_file"
 
 # Final summary
-echo -e "\nIf any URLs that encountered errors are saved into $error_file"
+echo -e "\n${BOLD}If any URLs that encountered errors are saved into $error_file${NC}"
 
 rm -f "$processed_file"

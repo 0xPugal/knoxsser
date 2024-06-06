@@ -1,4 +1,4 @@
-# KNOXSSer v1.3
+# KNOXSSer v1.4
 
 **An powerful bash script for massive XSS scanning leveraging Brute Logic's KNOXSS API**
 
@@ -27,7 +27,7 @@ Options:
   -i, --input     Input file containing URLs or single URL to scan
   -o, --output    Output file to save XSS results (default: xss.txt)
   -A, --api       API key for Knoxss
-  -s, --silent    Print only results without displaying the banner
+  -s, --silent    Print only results without displaying the banner and target count
   -n, --notify    Send notifications on successful XSSes via notify
   -p, --process   Number of URLs to scan parallely(1-5) (default: 1)
   -v, --version   Display the version and exit
@@ -38,7 +38,7 @@ Options:
 ## Features
    - Enables scanning of both single URLs and files containing multiple URLs
    - Unscanned URLs are saved in a `<input>+date-time.todo` file, providing a record of URLs not successfully scanned along with a timestamp.
-   - URLs that encountered errors during scanning, possibly due to issues with the KNOXSS API, are saved in a `<input>.errors` file. 
+   - URLs that encountered errors during scanning, possibly due to issues with the KNOXSS API, are saved in a `<input>.errors.todo` file. 
    - Successful XSS results are saved by default in `xss.txt`, with their full JSON responses.
    - Prints the API calls number along with the scanning process.
    - Send notifications on successful XSSes through notify
@@ -48,7 +48,7 @@ Options:
 ## Usage
 ```
 # All in one
-  knoxsser -i input.txt -p 3 --notify --verbose -o knoxss.txt
+  knoxsser -i input.txt -p 3 -n -V -o knoxss.txt
 
 # Single URL scan
   knoxsser --input https://brutelogic.com.br/xss.php?a=1
