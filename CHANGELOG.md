@@ -1,3 +1,7 @@
++ v1.4
+    - Add verbose mode for all reponses
+    - Add silent mode option also for count_targets
+
 + v1.3
     - Print Service unavailable message form KNOXSS API
     - Add verbose mode also for Unknown errors
