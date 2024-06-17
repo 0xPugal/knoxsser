@@ -143,7 +143,7 @@ fi
 
 # Function to handle Ctrl-C interruptions
 handle_ctrl_c() {
-    echo -e "\n${BOLD}Ctrl-C detected. Remaining URLs are saved into $todo_file${NC}"
+    echo -e "\n${BOLD}Ctrl-C detected. Remaining Unscanned URLs are saved into $todo_file${NC}"
     grep -vFf "$processed_file" "$urls_file" > "$todo_file"
     rm -f "$processed_file" 
     exit 1
@@ -249,7 +249,7 @@ process_url() {
             elif [[ "$error" == "target connection issues (timeout)" || "$error" == "KNOXSS can't finish scan gracefully (reason unknown)" ]]; then
                 retries=$((retries + 1))
                 if [[ $retries -lt $retry_count ]]; then
-                    echo -e "${RED}[ RETRY ] - $line - Retrying... (${retries}/${retry_count})${NC}"
+                    echo -e "${RED}[ ERROR ] - $line - Retrying... (${retries}/${retry_count})${NC}"
                     sleep 2  # Adding a small delay before retrying
                 else
                     echo -e "${RED}[ ERROR ] - $line - [${error}]${NC} [$api_call]"
@@ -291,6 +291,10 @@ export api_key output_file use_notify todo_file processed_file error_file verbos
 parallel -j "$parallel_processes" process_url :::: "$urls_file"
 
 # Final summary
-echo -e "\n${BOLD}If any URLs that encountered errors are saved into $error_file${NC}"
+if [[ -s "$error_file" ]]; then
+    echo -e "\n${BOLD}Some URLs encountered errors and are saved into $error_file${NC}"
+fi
+
+rm -f "$processed_file"
 
 rm -f "$processed_file"
