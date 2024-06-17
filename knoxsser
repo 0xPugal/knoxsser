@@ -249,7 +249,7 @@ process_url() {
             elif [[ "$error" == "target connection issues (timeout)" || "$error" == "KNOXSS can't finish scan gracefully (reason unknown)" ]]; then
                 retries=$((retries + 1))
                 if [[ $retries -lt $retry_count ]]; then
-                    echo -e "${RED}[ ERROR ] - $line - Retrying... (${retries}/${retry_count})${NC}"
+                    echo -e "${RED}[ ERROR ] - $line - [${error}]Retrying... (${retries}/${retry_count})${NC}"
                     sleep 2  # Adding a small delay before retrying
                 else
                     echo -e "${RED}[ ERROR ] - $line - [${error}]${NC} [$api_call]"
