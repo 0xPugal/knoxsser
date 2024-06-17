@@ -1,4 +1,4 @@
-# KNOXSSer v1.4
+# KNOXSSer v1.5
 
 **An powerful bash script for massive XSS scanning leveraging Brute Logic's KNOXSS API**
 
@@ -15,7 +15,7 @@ curl -sSL https://raw.githubusercontent.com/0xPugal/KNOXSSer/master/knoxsser -o 
 > jq and parallel must be installed in your system to run this tool
 ``sudo apt install -y jq && sudo apt install -y parallel``
 
-> Configure your knoxss api keyin [line 30 of knoxsser](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L30) or pass the API key with ``-A`` argument.
+> Configure your knoxss api key in [line 30 of knoxsser](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L36) or pass the API key with ``-A`` argument.
 
 
 > [Notify](https://github.com/projectdiscovery/notify) must be installed on your system, to send notifications on sucessful xss.(optional)
@@ -30,6 +30,7 @@ Options:
   -s, --silent    Print only results without displaying the banner and target count
   -n, --notify    Send notifications on successful XSSes via notify
   -p, --process   Number of URLs to scan parallely(1-5) (default: 1)
+  -r, --retry     Number of times to retry on target connection issues and can't finish scans"
   -v, --version   Display the version and exit
   -V, --verbose   Enable verbose output
   -h, --help      Display this help message and exit
@@ -48,7 +49,7 @@ Options:
 ## Usage
 ```
 # All in one
-  knoxsser -i input.txt -p 3 -n -V -o knoxss.txt
+  knoxsser -i input.txt -p 3 -n -V -r 2 -o knoxss.txt
 
 # Single URL scan
   knoxsser --input https://brutelogic.com.br/xss.php?a=1
