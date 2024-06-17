@@ -4,7 +4,9 @@
 
 [![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/) [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/0xPugal/KNOXSSer/graphs/commit-activity) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![Latest release](https://badgen.net/github/release/0xPugal/KNOXSSer?sort=semver&label=version)](https://github.com/0xPugal/KNOXSSer/releases) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/0xPugal/KNOXSSer)
 
-<img src=KNOXSSer.png>
+
+![image](https://github.com/0xPugal/knoxsser/assets/75373225/b2219d21-d8d0-4b6a-8005-e402e0148964)
+
 
 ## Installation
 ```
