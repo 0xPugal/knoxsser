@@ -221,6 +221,10 @@ process_url() {
                         api_calls=$((api_calls + 1))
                     fi
                 fi
+                if $verbose_mode; then
+                    echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+                    echo "$response" | jq .
+                fi
                 break
 
             elif [[ "$xss" == "false" ]]; then
@@ -228,38 +232,50 @@ process_url() {
                 if [[ "$api_call" != "0" ]]; then
                     api_calls=$((api_calls + 1))
                 fi
+                if $verbose_mode; then
+                    echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+                    echo "$response" | jq .
+                fi
                 break
 
             elif [[ "$error" == "KNOXSS can't test it (forbidden)" ]]; then
                 echo -e "${RED}[ 403:( ] - $line - [Forbidden]${NC} [$api_call]"
+                if $verbose_mode; then
+                    echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+                    echo "$response" | jq .
+                fi
                 break
 
             elif [[ "$error" == "target connection issues (timeout)" || "$error" == "KNOXSS can't finish scan gracefully (reason unknown)" ]]; then
                 retries=$((retries + 1))
                 if [[ $retries -lt $retry_count ]]; then
-                    echo -e "${YELLOW}[ RETRY ] - $line - Retrying... (${retries}/${retry_count})${NC}"
+                    echo -e "${RED}[ RETRY ] - $line - Retrying... (${retries}/${retry_count})${NC}"
                     sleep 2  # Adding a small delay before retrying
                 else
                     echo -e "${RED}[ ERROR ] - $line - [${error}]${NC} [$api_call]"
-                    echo "$line" >> "$error_file"
+                fi
+                if $verbose_mode; then
+                    echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+                    echo "$response" | jq .
                 fi
 
             elif [[ "$error" == "service unavailable" ]]; then
                 echo -e "${RED}[ ERROR ] - $line - [KNOXSS Service Unavailable]${NC} [$api_call]"
                 echo -e "$line" >> "$error_file"
+                if $verbose_mode; then
+                    echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+                    echo "$response" | jq .
+                fi
                 break
 
             else
                 echo -e "${RED}[ ERROR ] - $line - [Unknown error]${NC} [$api_call]"
                 echo "$line" >> "$error_file"
-		echo "$response"
+                if $verbose_mode; then
+                    echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+                    echo "$response" | jq .
+                fi
                 break
-            fi
-
-            # Print verbose output if verbose mode is enabled
-            if $verbose_mode; then
-                echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
-                echo "$response" | jq .
             fi
         fi
     done
