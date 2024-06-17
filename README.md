@@ -1,10 +1,12 @@
-# KNOXSSer v1.4
+# KNOXSSer v1.5
 
 **An powerful bash script for massive XSS scanning leveraging Brute Logic's KNOXSS API**
 
 [![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/) [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/0xPugal/KNOXSSer/graphs/commit-activity) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![Latest release](https://badgen.net/github/release/0xPugal/KNOXSSer?sort=semver&label=version)](https://github.com/0xPugal/KNOXSSer/releases) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/0xPugal/KNOXSSer)
 
-<img src=KNOXSSer.png>
+
+![image](https://github.com/0xPugal/knoxsser/assets/75373225/b2219d21-d8d0-4b6a-8005-e402e0148964)
+
 
 ## Installation
 ```
@@ -13,9 +15,11 @@ curl -sSL https://raw.githubusercontent.com/0xPugal/KNOXSSer/master/knoxsser -o 
 
 ## Prerequisites
 > jq and parallel must be installed in your system to run this tool
-``sudo apt install -y jq && sudo apt install -y parallel``
-
-> Configure your knoxss api keyin [line 30 of knoxsser](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L30) or pass the API key with ``-A`` argument.
+  + Debian based Distros - ``sudo apt install -y curl jq parallel``
+  + RedHat based Distros - ``dnf install curl jq parallel``
+  + Arch based Distros - ``pacman -S curl jq parallel``
+  + Mac OS - ``brew install jq parallel``
+> Configure your knoxss api key in [line 36 of knoxsser](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L36) or pass the API key with ``-A`` argument.
 
 
 > [Notify](https://github.com/projectdiscovery/notify) must be installed on your system, to send notifications on sucessful xss.(optional)
@@ -30,6 +34,7 @@ Options:
   -s, --silent    Print only results without displaying the banner and target count
   -n, --notify    Send notifications on successful XSSes via notify
   -p, --process   Number of URLs to scan parallely(1-5) (default: 1)
+  -r, --retry     Number of times to retry on target connection issues and can't finish scans"
   -v, --version   Display the version and exit
   -V, --verbose   Enable verbose output
   -h, --help      Display this help message and exit
@@ -48,7 +53,7 @@ Options:
 ## Usage
 ```
 # All in one
-  knoxsser -i input.txt -p 3 -n -V -o knoxss.txt
+  knoxsser -i input.txt -p 3 -n -V -r 2 -o knoxss.txt
 
 # Single URL scan
   knoxsser --input https://brutelogic.com.br/xss.php?a=1
@@ -72,7 +77,6 @@ Options:
 ## Credits
 + An amazing [KNOXSS](https://knoxss.me/) API by Brute Logic.
 + This script was inspired from the [knoxnl](https://github.com/xnl-h4ck3r/knoxnl) tool created by [xnl_h4ck3r](https://twitter.com/xnl_h4ck3r).
-+ Notification on successful XSS via [Project Discovery](https://github.com/projectdiscovery)'s [Notify](https://github.com/projectdiscovery/notify).
 
 > [!CAUTION]
 > ⚠️ Disclaimer: I am not responsible for any use, and especially misuse, of this tool or the KNOXSS API

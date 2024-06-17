@@ -1,3 +1,7 @@
++ v1.5
+    - Add retry options for ``target connection issues`` and ``can't finish scan gracefully`` (default: 1)"
+    - Add verbose output for all responses from knoxss api
+
 + v1.4
     - Add verbose mode for all reponses
     - Add silent mode option also for count_targets

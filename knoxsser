@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 CYAN='\033[0;36m'
 GREEN='\033[0;32m'
@@ -14,7 +14,7 @@ print_banner() {
     echo -e "${CYAN}█████╔╝ ██╔██╗ ██║██║   ██║ ╚███╔╝ ███████╗███████╗█████╗  ██████╔╝ ${NC}"
     echo -e "${CYAN}██╔═██╗ ██║╚██╗██║██║   ██║ ██╔██╗ ╚════██║╚════██║██╔══╝  ██╔══██╗ ${NC}"
     echo -e "${CYAN}██║  ██╗██║ ╚████║╚██████╔╝██╔╝ ██╗███████║███████║███████╗██║  ██║ ${NC}"
-    echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝v1.4 ${NC}"
+    echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝$VERSION ${NC}"
     echo -e "${BOLD}                                        Made with ${RED}<3${NC} by @0xPugal    ${NC}"
     echo ""
 }
@@ -35,11 +35,12 @@ input_type="file"
 input_file=""
 api_key="YOUR_KNOXSS_API_KEY"
 output_file="xss.txt"
-VERSION="v1.4"
+VERSION="v1.5"
 silent_mode=false
 use_notify=false
 parallel_processes=1
 verbose_mode=false
+retry_count=2
 
 usage() {
     print_banner
@@ -50,6 +51,7 @@ usage() {
     echo "  -s, --silent    Print only results without displaying the banner and target count"
     echo "  -n, --notify    Send notifications on successful XSSes via notify"
     echo "  -p, --process   Number of URLs to scan parallely(1-5) (default: 1)"
+    echo "  -r, --retry     Number of times to retry on target connection issues & can't finish scans (default: 1)"
     echo "  -v, --version   Display the version and exit"
     echo "  -V, --verbose   Enable verbose output"
     echo "  -h, --help      Display this help message and exit"
@@ -97,6 +99,11 @@ while [[ $# -gt 0 ]]; do
             shift
             shift
             ;;
+        -r|--retry)
+            retry_count="$2"
+            shift
+            shift
+            ;;
         -v|--version)
             echo "Version: ${VERSION}"
             exit 0
@@ -136,7 +143,7 @@ fi
 
 # Function to handle Ctrl-C interruptions
 handle_ctrl_c() {
-    echo -e "\n${BOLD}Ctrl-C detected. Remaining URLs are saved into $todo_file${NC}"
+    echo -e "\n${BOLD}Ctrl-C detected. Remaining Unscanned URLs are saved into $todo_file${NC}"
     grep -vFf "$processed_file" "$urls_file" > "$todo_file"
     rm -f "$processed_file" 
     exit 1
@@ -173,88 +180,121 @@ fi
 process_url() {
     local line="$1"
     local lineno="$2"
+    local retries=0
     
-    response=$(curl "https://api.knoxss.pro" -d target="$line" -H "X-API-KEY: $api_key" -s)
+    while [[ $retries -lt $retry_count ]]; do
+        response=$(curl "https://api.knoxss.pro" -d target="$line" -H "X-API-KEY: $api_key" -s)
 
-    if [[ "$response" == *"Invalid or expired API key."* ]]; then
-        echo -e "${RED}Invalid or expired API key. Exiting.${NC}"
-        if $verbose_mode; then
-            echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
-            echo "$response"
-        fi
-        exit 1
-    
-    elif [[ "$response" == *"<p"* ]]; then
-        echo -e "${RED}[ NOPE/ ] - $line - XSS is not possible in this content-type${NC} [0]"
-        if $verbose_mode; then
-            echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
-            echo "$response"
-        fi
-    
-    else
-        xss=$(jq -r '.XSS' <<< "$response")
-        poc=$(jq -r '.PoC' <<< "$response")
-        error=$(jq -r '.Error' <<< "$response")
-        api_call=$(jq -r '.["API Call"]' <<< "$response")
-        time_elapsed=$(jq -r '.["Time Elapsed"]' <<< "$response")
-        timestamp=$(jq -r '.Timestamp' <<< "$response")
-        version=$(jq -r '.Version' <<< "$response")
+        if [[ "$response" == *"Invalid or expired API key."* ]]; then
+            echo -e "${RED}Invalid or expired API key. Exiting.${NC}"
+            if $verbose_mode; then
+                echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+                echo "$response"
+            fi
+            exit 1
+        
+        elif [[ "$response" == *"<p"* ]]; then
+            echo -e "${RED}[ NOPE/ ] - $line - XSS is not possible in this content-type${NC} [0]"
+            if $verbose_mode; then
+                echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+                echo "$response"
+            fi
+            break
+        
+        else
+            xss=$(jq -r '.XSS' <<< "$response")
+            poc=$(jq -r '.PoC' <<< "$response")
+            error=$(jq -r '.Error' <<< "$response")
+            api_call=$(jq -r '.["API Call"]' <<< "$response")
+            time_elapsed=$(jq -r '.["Time Elapsed"]' <<< "$response")
+            timestamp=$(jq -r '.Timestamp' <<< "$response")
+            version=$(jq -r '.Version' <<< "$response")
 
-        # Handle XSS detection
-        if [[ "$xss" == "true" ]]; then
-            echo -e "${GREEN}[ XSS!! ] - $poc ${NC} [$api_call]"
-            echo "$response" >> "$output_file"
+            # Handle XSS detection
+            if [[ "$xss" == "true" ]]; then
+                echo -e "${GREEN}[ XSS!! ] - $poc ${NC} [$api_call]"
+                echo "$response" >> "$output_file"
 
-            if [[ "$use_notify" == true ]]; then
-                echo "$poc" | notify -silent > /dev/null 2>&1 
+                if [[ "$use_notify" == true ]]; then
+                    echo "$poc" | notify -silent > /dev/null 2>&1 
+                    if [[ "$api_call" != "0" ]]; then
+                        api_calls=$((api_calls + 1))
+                    fi
+                fi
+                if $verbose_mode; then
+                    echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+                    echo "$response" | jq .
+                fi
+                break
+
+            elif [[ "$xss" == "false" ]]; then
+                echo -e "${YELLOW}[ noXSS ] - $line ${NC} [$api_call]"
                 if [[ "$api_call" != "0" ]]; then
                     api_calls=$((api_calls + 1))
                 fi
+                if $verbose_mode; then
+                    echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+                    echo "$response" | jq .
+                fi
+                break
+
+            elif [[ "$error" == "KNOXSS can't test it (forbidden)" ]]; then
+                echo -e "${RED}[ 403:( ] - $line - [Forbidden]${NC} [$api_call]"
+                if $verbose_mode; then
+                    echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+                    echo "$response" | jq .
+                fi
+                break
+
+            elif [[ "$error" == "target connection issues (timeout)" || "$error" == "KNOXSS can't finish scan gracefully (reason unknown)" ]]; then
+                retries=$((retries + 1))
+                if [[ $retries -lt $retry_count ]]; then
+                    echo -e "${RED}[ ERROR ] - $line - Retrying... (${retries}/${retry_count})${NC}"
+                    sleep 2  # Adding a small delay before retrying
+                else
+                    echo -e "${RED}[ ERROR ] - $line - [${error}]${NC} [$api_call]"
+                fi
+                if $verbose_mode; then
+                    echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+                    echo "$response" | jq .
+                fi
+
+            elif [[ "$error" == "service unavailable" ]]; then
+                echo -e "${RED}[ ERROR ] - $line - [KNOXSS Service Unavailable]${NC} [$api_call]"
+                echo -e "$line" >> "$error_file"
+                if $verbose_mode; then
+                    echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+                    echo "$response" | jq .
+                fi
+                break
+
+            else
+                echo -e "${RED}[ ERROR ] - $line - [Unknown error]${NC} [$api_call]"
+                echo "$line" >> "$error_file"
+                if $verbose_mode; then
+                    echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
+                    echo "$response" | jq .
+                fi
+                break
             fi
-
-        elif [[ "$xss" == "false" ]]; then
-            echo -e "${YELLOW}[ noXSS ] - $line ${NC} [$api_call]"
-            if [[ "$api_call" != "0" ]]; then
-                api_calls=$((api_calls + 1))
-            fi
-        
-        elif [[ "$error" == "KNOXSS can't test it (forbidden)" ]]; then
-            echo -e "${RED}[ 403:( ] - $line - [Forbidden]${NC} [$api_call]"
-
-        elif [[ "$error" == "target connection issues (timeout)" ]]; then
-            echo -e "${RED}[ ERROR ] - $line - [Target connection issues]${NC} [$api_call]"
-
-        elif [[ "$error" == "KNOXSS can't finish scan gracefully (reason unknown)" ]]; then
-            echo -e "${RED}[ ERROR ] - $line - [KNOXSS can't finish scan gracefully]${NC} [$api_call]"
-            echo -e "$line" >> "$error_file"
-			
-		elif [[ "$error" == "service unavailable" ]]; then
-			echo -e "${RED}[ ERROR ] - $line - [KNOXSS Service Unavailable]${NC} [$api_call]"
-			echo -e "$line" >> "$error_file"
-
-        else
-            echo -e "${RED}[ ERROR ] - $line - [Unknown error]${NC} [$api_call]"
-            echo "$line" >> "$error_file"
         fi
-
-        # Print verbose output if verbose mode is enabled
-        if $verbose_mode; then
-            echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
-            echo "$response" | jq .
-        fi
-    fi
+    done
 
     echo "$line" >> "$processed_file"
 }
 
 # Setup for parallel processing
 export -f process_url
-export api_key output_file use_notify todo_file processed_file error_file verbose_mode CYAN GREEN RED YELLOW BOLD NC
+export api_key output_file use_notify todo_file processed_file error_file verbose_mode CYAN GREEN RED YELLOW BOLD NC retry_count
 
 # Start processing URLs in parallel
 parallel -j "$parallel_processes" process_url :::: "$urls_file"
 
 # Final summary
-echo -e "\n${BOLD}If any URLs that encountered errors are saved into $error_file${NC}"
+if [[ -s "$error_file" ]]; then
+    echo -e "\n${BOLD}Some URLs encountered errors and are saved into $error_file${NC}"
+fi
+
+rm -f "$processed_file"
 
 rm -f "$processed_file"
