@@ -15,9 +15,11 @@ curl -sSL https://raw.githubusercontent.com/0xPugal/KNOXSSer/master/knoxsser -o 
 
 ## Prerequisites
 > jq and parallel must be installed in your system to run this tool
-``sudo apt install -y jq && sudo apt install -y parallel``
-
-> Configure your knoxss api key in [line 30 of knoxsser](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L36) or pass the API key with ``-A`` argument.
+  + Debian based Distros - ``sudo apt install -y curl jq parallel``
+  + RedHat based Distros - ``dnf install curl jq parallel``
+  + Arch based Distros - ``pacman -S curl jq parallel``
+  + Mac OS - ``brew install jq parallel``
+> Configure your knoxss api key in [line 36 of knoxsser](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L36) or pass the API key with ``-A`` argument.
 
 
 > [Notify](https://github.com/projectdiscovery/notify) must be installed on your system, to send notifications on sucessful xss.(optional)
@@ -75,7 +77,6 @@ Options:
 ## Credits
 + An amazing [KNOXSS](https://knoxss.me/) API by Brute Logic.
 + This script was inspired from the [knoxnl](https://github.com/xnl-h4ck3r/knoxnl) tool created by [xnl_h4ck3r](https://twitter.com/xnl_h4ck3r).
-+ Notification on successful XSS via [Project Discovery](https://github.com/projectdiscovery)'s [Notify](https://github.com/projectdiscovery/notify).
 
 > [!CAUTION]
 > ⚠️ Disclaimer: I am not responsible for any use, and especially misuse, of this tool or the KNOXSS API
