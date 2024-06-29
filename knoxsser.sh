@@ -15,7 +15,7 @@ print_banner() {
     echo -e "${CYAN}██╔═██╗ ██║╚██╗██║██║   ██║ ██╔██╗ ╚════██║╚════██║██╔══╝  ██╔══██╗ ${NC}"
     echo -e "${CYAN}██║  ██╗██║ ╚████║╚██████╔╝██╔╝ ██╗███████║███████║███████╗██║  ██║ ${NC}"
     echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝$VERSION ${NC}"
-    echo -e "${BOLD}                                        Made with ${RED}<3${NC} by @0xPugal    ${NC}"
+    echo -e "                                        Made with ${RED}<3${NC} ${BOLD}by @0xPugal    ${NC}"
     echo ""
 }
 
@@ -33,14 +33,15 @@ fi
 # Default values
 input_type="file"
 input_file=""
-api_key="YOUR_KNOXSS_API_KEY"
+api_key="KNOXSS_API_KEY"
 output_file="xss.txt"
-VERSION="v1.5"
+VERSION="v1.6"
 silent_mode=false
 use_notify=false
-parallel_processes=1
+parallel_processes=3
 verbose_mode=false
 retry_count=2
+unknown_error_log="error.log"
 
 usage() {
     print_banner
@@ -50,7 +51,7 @@ usage() {
     echo "  -A, --api       API key for Knoxss"
     echo "  -s, --silent    Print only results without displaying the banner and target count"
     echo "  -n, --notify    Send notifications on successful XSSes via notify"
-    echo "  -p, --process   Number of URLs to scan parallely(1-5) (default: 1)"
+    echo "  -p, --process   Number of URLs to scan parallely(1-5) (default: 3)"
     echo "  -r, --retry     Number of times to retry on target connection issues & can't finish scans (default: 1)"
     echo "  -v, --version   Display the version and exit"
     echo "  -V, --verbose   Enable verbose output"
@@ -156,24 +157,11 @@ lineno=1
 api_calls=0
 todo_file="${urls_file}-$(date +'%Y%m%d%H%M%S').todo"
 processed_file="${urls_file}-$(date +'%Y%m%d%H%M%S').processed"
-error_file="${urls_file}.errors.todo"
 
 # Displaying banner and target count
 if ! $silent_mode; then
     print_banner
     target_count
-fi
-
-# Check for a valid API key
-test_response=$(curl "https://api.knoxss.pro" -d target="https://example.com" -H "X-API-KEY: $api_key" -s)
-
-if [[ "$test_response" == "Invalid or expired API key." ]]; then
-    echo -e "${RED}Invalid or expired API key. Exiting.${NC}"
-    if $verbose_mode; then
-        echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
-        echo "$test_response"
-    fi
-    exit 1
 fi
 
 # Main loop to scan URLs
@@ -194,7 +182,7 @@ process_url() {
             exit 1
         
         elif [[ "$response" == *"<p"* ]]; then
-            echo -e "${RED}[ NOPE/ ] - $line - XSS is not possible in this content-type${NC} [0]"
+            echo -e "${YELLOW}[ NOPE/ ] - $line - [XSS is not possible in this content-type]${NC} [0]"
             if $verbose_mode; then
                 echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
                 echo "$response"
@@ -212,7 +200,7 @@ process_url() {
 
             # Handle XSS detection
             if [[ "$xss" == "true" ]]; then
-                echo -e "${GREEN}[ XSS!! ] - $poc ${NC} [$api_call]"
+                echo -e "${GREEN}${BOLD}[ XSS!! ] - $poc ${NC} [$api_call]"
                 echo "$response" >> "$output_file"
 
                 if [[ "$use_notify" == true ]]; then
@@ -239,7 +227,7 @@ process_url() {
                 break
 
             elif [[ "$error" == "KNOXSS can't test it (forbidden)" ]]; then
-                echo -e "${RED}[ 403:( ] - $line - [Forbidden]${NC} [$api_call]"
+                echo -e "${RED}[ 403:( ] - $line - [$error]${NC} [$api_call]"
                 if $verbose_mode; then
                     echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
                     echo "$response" | jq .
@@ -260,17 +248,36 @@ process_url() {
                 fi
 
             elif [[ "$error" == "service unavailable" ]]; then
-                echo -e "${RED}[ ERROR ] - $line - [KNOXSS Service Unavailable]${NC} [$api_call]"
-                echo -e "$line" >> "$error_file"
+                echo -e "${RED}[ ERROR ] - $line - [Service Unavailable]${NC} [$api_call]"
+                echo -e "$line" >> "$todo_file"
                 if $verbose_mode; then
                     echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
                     echo "$response" | jq .
                 fi
                 break
 
+            elif [[ "$error" == "API rate limit exceeded." ]]; then
+                echo -e "${RED}[ ERROR ] - $line - [API rate limit exceeded]${NC} [$api_call]"
+                echo -e "$line" >> "$todo_file"
+                if $verbose_mode; then
+                    echo -e "${BOLD}Verbose response from KNOXSS API: ${NC}"
+                    echo "$response" | jq .
+                fi
+                break
+            
+            elif [[ "$error" == "Expiration time reset, please try again." ]]; then
+                echo -e "${RED}[ ERROR ] - $line - [Expiration time reset, please try again] ${NC} [$api_call]"
+                echo -e "$line" >> "$todo_file"
+                if $verbose_mode; then
+                    echo -e "${BOLD}Verbose response from KNOXSS API: ${NC}"
+                    echo "$reponse" | jq .
+                fi
+                break
+
             else
-                echo -e "${RED}[ ERROR ] - $line - [Unknown error]${NC} [$api_call]"
-                echo "$line" >> "$error_file"
+                echo -e "${RED}[ ERROR ] - $line - [Unknown Error]${NC} [$api_call]"
+                echo "$line" >> "$todo_file"
+                echo "$response" >> "$unknown_error_log"
                 if $verbose_mode; then
                     echo -e "${BOLD}Verbose response from KNOXSS API:${NC}"
                     echo "$response" | jq .
@@ -285,16 +292,18 @@ process_url() {
 
 # Setup for parallel processing
 export -f process_url
-export api_key output_file use_notify todo_file processed_file error_file verbose_mode CYAN GREEN RED YELLOW BOLD NC retry_count
+export api_key output_file use_notify todo_file processed_file unknown_error_log verbose_mode CYAN GREEN RED YELLOW BOLD NC retry_count
 
 # Start processing URLs in parallel
 parallel -j "$parallel_processes" process_url :::: "$urls_file"
 
 # Final summary
-if [[ -s "$error_file" ]]; then
-    echo -e "\n${BOLD}Some URLs encountered errors and are saved into $error_file${NC}"
+if [[ -s "$todo_file" ]]; then
+    echo -e "\n${BOLD}Some URLs encountered errors and are saved into $todo_file${NC}"
 fi
 
-rm -f "$processed_file"
+if [[ -s "$unknown_error_log" ]]; then
+    echo -e "\n${BOLD}Some URLs encountered unknown errors and their responses are saved into $unknown_error_log${NC}"
+fi
 
 rm -f "$processed_file"

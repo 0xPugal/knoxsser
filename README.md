@@ -1,6 +1,6 @@
-# KNOXSSer v1.5
+# KNOXSSer v1.6
 
-**An powerful bash script for massive XSS scanning leveraging Brute Logic's KNOXSS API**
+**An powerful bash script for massive XSS scanning leveraging [Brute Logic's](https://brutelogic.com.br/blog/about) [KNOXSS API](https://knoxss.me)**
 
 [![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/) [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/0xPugal/KNOXSSer/graphs/commit-activity) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![Latest release](https://badgen.net/github/release/0xPugal/KNOXSSer?sort=semver&label=version)](https://github.com/0xPugal/KNOXSSer/releases) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/0xPugal/KNOXSSer)
 
@@ -10,7 +10,7 @@
 
 ## Installation
 ```
-curl -sSL https://raw.githubusercontent.com/0xPugal/KNOXSSer/master/knoxsser -o knoxsser && chmod +x knoxsser && sudo mv knoxsser /usr/bin/
+curl -sSL https://raw.githubusercontent.com/0xPugal/knoxsser/master/knoxsser.sh -o knoxsser.sh && chmod +x knoxsser.sh && sudo mv knoxsser.sh /usr/bin/knoxsser
 ```
 
 ## Prerequisites
@@ -19,7 +19,7 @@ curl -sSL https://raw.githubusercontent.com/0xPugal/KNOXSSer/master/knoxsser -o 
   + RedHat based Distros - ``dnf install curl jq parallel``
   + Arch based Distros - ``pacman -S curl jq parallel``
   + Mac OS - ``brew install jq parallel``
-> Configure your knoxss api key in [line 36 of knoxsser](https://github.com/0xPugal/KNOXSSer/blob/master/knoxsser#L36) or pass the API key with ``-A`` argument.
+> Configure your knoxss api key in [line 36 of knoxsser](https://github.com/0xPugal/knoxsser/blob/master/knoxsser.sh#L36) or pass the API key with ``-A`` argument.
 
 
 > [Notify](https://github.com/projectdiscovery/notify) must be installed on your system, to send notifications on sucessful xss.(optional)
@@ -33,7 +33,7 @@ Options:
   -A, --api       API key for Knoxss
   -s, --silent    Print only results without displaying the banner and target count
   -n, --notify    Send notifications on successful XSSes via notify
-  -p, --process   Number of URLs to scan parallely(1-5) (default: 1)
+  -p, --process   Number of URLs to scan parallely(1-5) (default: 3)
   -r, --retry     Number of times to retry on target connection issues and can't finish scans"
   -v, --version   Display the version and exit
   -V, --verbose   Enable verbose output
@@ -42,9 +42,10 @@ Options:
 
 ## Features
    - Enables scanning of both single URLs and files containing multiple URLs
-   - Unscanned URLs are saved in a `<input>+date-time.todo` file, providing a record of URLs not successfully scanned along with a timestamp.
-   - URLs that encountered errors during scanning, possibly due to issues with the KNOXSS API, are saved in a `<input>.errors.todo` file. 
-   - Successful XSS results are saved by default in `xss.txt`, with their full JSON responses.
+   - Unscanned / Remaining URLs and URLs that encountered errors  are saved in a `<input>+date-time.todo` file, providing a record of URLs not successfully scanned along with a timestamp.
+   - Ability to stop the scan and save the remaining URLs in a `<input>+date-time.todo` file.
+   - Successful XSS results are saved by default in `xss.txt`, with their full JSON responses, and `error.log` file for further investigation for Unknown Errors.
+   - Ability to retry the scan, if any error like `Connection issues` or `can't able to scan by knoxss`
    - Prints the API calls number along with the scanning process.
    - Send notifications on successful XSSes through notify
    - Parallel scans options for faster scan completion
@@ -73,6 +74,7 @@ Options:
 
 ## ToDo
 + Allow knoxsser to read input from stdin
++ Stop the scan on `Invalid or Expired API Key` and `API rate limit exceeded` and save the urls in `<input>-date-time.todo` file
 
 ## Credits
 + An amazing [KNOXSS](https://knoxss.me/) API by Brute Logic.

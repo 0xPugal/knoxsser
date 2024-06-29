@@ -1,3 +1,9 @@
++ v1.6
+    - Remove `<inpu>.errors.todo` file and append the urls which encountered errors into `<input>-date-time.todo` file
+    - Save the Unknown Errors in `errors.log` file for further investigation.
+    - Print `API rate limit exceeded` and `Expiration time reset, please try again` from KNOXSS API
+    - Compatibility to run on `bash`, `zsh`, `sh`
+
 + v1.5
     - Add retry options for ``target connection issues`` and ``can't finish scan gracefully`` (default: 1)"
     - Add verbose output for all responses from knoxss api
