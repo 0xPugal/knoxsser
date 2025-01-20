@@ -1,3 +1,8 @@
++ v1.8
+    - Added version checking functionality.
+    - Prompt user to update the script if outdated.
+    - Added automatic update feature with user confirmation.
+
 + v1.7
     - Add different errors message from knoxss api response, `KNOXSS PoC attempt got no response from target, please retry` and `KNOXSS engine failed at some point, please retry` instead of printing `Unknown Error` and retry the scan. (default: 1)
     - Changed the KNOXSS url from https://knoxss.me to https://knoxss.pro

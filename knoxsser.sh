@@ -7,6 +7,11 @@ YELLOW='\033[0;33m'
 BOLD='\033[1m'
 NC='\033[0m'
 
+VERSION="v1.8"
+REPO_URL="https://raw.githubusercontent.com/0xPugal/knoxsser/master/VERSION"
+SCRIPT_URL="https://raw.githubusercontent.com/0xPugal/knoxsser/master/knoxsser.sh"
+SCRIPT_PATH="/usr/bin/knoxsser"
+
 print_banner() {
     echo ""
     echo -e "${CYAN}██╗  ██╗███╗   ██╗ ██████╗ ██╗  ██╗███████╗███████╗███████╗██████╗  ${NC}"
@@ -17,6 +22,23 @@ print_banner() {
     echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝$VERSION ${NC}"
     echo -e "                                        Made with ${RED}${BOLD}<3${NC} by${BOLD} @0xPugal    ${NC}"
     echo ""
+}
+
+check_version() {
+    latest_version=$(curl -s "$REPO_URL")
+    if [[ "$VERSION" != "$latest_version" ]]; then
+        echo -e "${YELLOW}Your script is outdated. Latest version is ${latest_version}.${NC}"
+        read -p "${BOLD}Do you want to update to the latest version? (Y/N):${NC} " update_choice
+        if [[ "$update_choice" =~ ^[Yy]$ ]]; then
+            echo -e "${YELLOW}Updating KNOXSSer...${NC}"
+            curl -sSL "$SCRIPT_URL" -o knoxsser.sh && chmod +x knoxsser.sh && sudo mv knoxsser.sh "$SCRIPT_PATH"
+            echo -e "${GREEN}${BOLD}KNOXSSer updated!!!${NC}"
+            echo -e "${YELLOW}Reminder: Make sure to set the API key in the knoxsser file(updating overwrite the knoxsser file), or pass it with the -A argument.${NC}"
+            exit 0
+        fi
+    else
+        echo -e "${GREEN}Your script is up-to-date.${NC}"
+    fi
 }
 
 target_count() {
@@ -35,7 +57,6 @@ input_type="file"
 input_file=""
 api_key="KNOXSS_API_KEY"
 output_file="xss.txt"
-VERSION="v1.7"
 silent_mode=false
 use_notify=false
 parallel_processes=3
@@ -144,7 +165,7 @@ fi
 
 # Function to handle Ctrl-C interruptions
 handle_ctrl_c() {
-    echo -e "\n${BOLD}Ctrl-C detected. Remaining Unscanned URLs are saved into $todo_file${NC}"
+    echo -e "\n${BOLD}Ctrl-C detected. Remastering Unscanned URLs are saved into $todo_file${NC}"
     grep -vFf "$processed_file" "$urls_file" > "$todo_file"
     rm -f "$processed_file" 
     exit 1
@@ -161,10 +182,11 @@ processed_file="${urls_file}-$(date +'%Y%m%d%H%M%S').processed"
 # Displaying banner and target count
 if ! $silent_mode; then
     print_banner
+    check_version
     target_count
 fi
 
-# Main loop to scan URLs
+# master loop to scan URLs
 process_url() {
     local line="$1"
     local lineno="$2"

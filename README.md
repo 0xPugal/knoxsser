@@ -1,4 +1,4 @@
-# KNOXSSer v1.7
+# KNOXSSer v1.8
 
 **An powerful bash script for massive XSS scanning leveraging [Brute Logic's](https://brutelogic.com.br/blog/about) [KNOXSS API](https://knoxss.pro)**
 
