@@ -15,7 +15,7 @@ print_banner() {
     echo -e "${CYAN}██╔═██╗ ██║╚██╗██║██║   ██║ ██╔██╗ ╚════██║╚════██║██╔══╝  ██╔══██╗ ${NC}"
     echo -e "${CYAN}██║  ██╗██║ ╚████║╚██████╔╝██╔╝ ██╗███████║███████║███████╗██║  ██║ ${NC}"
     echo -e "${CYAN}╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝$VERSION ${NC}"
-    echo -e "                                        Made with ${RED}<3${NC} ${BOLD}by @0xPugal    ${NC}"
+    echo -e "                                        Made with ${RED}${BOLD}<3${NC} by${BOLD} @0xPugal    ${NC}"
     echo ""
 }
 
@@ -35,7 +35,7 @@ input_type="file"
 input_file=""
 api_key="KNOXSS_API_KEY"
 output_file="xss.txt"
-VERSION="v1.6"
+VERSION="v1.7"
 silent_mode=false
 use_notify=false
 parallel_processes=3
@@ -234,7 +234,7 @@ process_url() {
                 fi
                 break
 
-            elif [[ "$error" == "target connection issues (timeout)" || "$error" == "KNOXSS can't finish scan gracefully (reason unknown)" ]]; then
+            elif [[ "$error" == "target connection issues (timeout)" || "$error" == "KNOXSS can't finish scan gracefully (reason unknown)" || "$error" == "KNOXSS engine failed at some point, please retry" || "$error" == "KNOXSS PoC attempt got no response from target, please retry" || "$error" == "Expiration time reset, please try again." ]]; then
                 retries=$((retries + 1))
                 if [[ $retries -lt $retry_count ]]; then
                     echo -e "${RED}[ ERROR ] - $line - [${error}]Retrying... (${retries}/${retry_count})${NC}"
@@ -264,13 +264,13 @@ process_url() {
                     echo "$response" | jq .
                 fi
                 break
-            
-            elif [[ "$error" == "Expiration time reset, please try again." ]]; then
-                echo -e "${RED}[ ERROR ] - $line - [Expiration time reset, please try again] ${NC} [$api_call]"
+
+            elif [[ "$error" == "not allowed" ]]; then
+                echo -e "${RED}[ ERROR ] - $line - [Not Allowed]${NC} [$api_call]"
                 echo -e "$line" >> "$todo_file"
                 if $verbose_mode; then
                     echo -e "${BOLD}Verbose response from KNOXSS API: ${NC}"
-                    echo "$reponse" | jq .
+                    echo "$response" | jq .
                 fi
                 break
 

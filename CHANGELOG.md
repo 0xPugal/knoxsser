@@ -1,3 +1,8 @@
++ v1.7
+    - Add different errors message from knoxss api response, `KNOXSS PoC attempt got no response from target, please retry` and `KNOXSS engine failed at some point, please retry` instead of printing `Unknown Error` and retry the scan. (default: 1)
+    - Changed the KNOXSS url from https://knoxss.me to https://knoxss.pro
+    - Add the error message from knoxss api response, `Not Allowed` instead of printing `Unknown Error`
+
 + v1.6
     - Remove `<inpu>.errors.todo` file and append the urls which encountered errors into `<input>-date-time.todo` file
     - Save the Unknown Errors in `errors.log` file for further investigation.

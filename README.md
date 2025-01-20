@@ -1,6 +1,6 @@
-# KNOXSSer v1.6
+# KNOXSSer v1.7
 
-**An powerful bash script for massive XSS scanning leveraging [Brute Logic's](https://brutelogic.com.br/blog/about) [KNOXSS API](https://knoxss.me)**
+**An powerful bash script for massive XSS scanning leveraging [Brute Logic's](https://brutelogic.com.br/blog/about) [KNOXSS API](https://knoxss.pro)**
 
 [![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/) [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/0xPugal/KNOXSSer/graphs/commit-activity) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![Latest release](https://badgen.net/github/release/0xPugal/KNOXSSer?sort=semver&label=version)](https://github.com/0xPugal/KNOXSSer/releases) [![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/0xPugal/KNOXSSer)
 
@@ -77,7 +77,7 @@ Options:
 + Stop the scan on `Invalid or Expired API Key` and `API rate limit exceeded` and save the urls in `<input>-date-time.todo` file
 
 ## Credits
-+ An amazing [KNOXSS](https://knoxss.me/) API by Brute Logic.
++ An amazing [KNOXSS](https://knoxss.pro) API by Brute Logic.
 + This script was inspired from the [knoxnl](https://github.com/xnl-h4ck3r/knoxnl) tool created by [xnl_h4ck3r](https://twitter.com/xnl_h4ck3r).
 
 > [!CAUTION]
