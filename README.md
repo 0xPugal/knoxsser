@@ -1,4 +1,4 @@
-# KNOXSSer v1.8
+# KNOXSSer v2.0
 
 **An powerful bash script for massive XSS scanning leveraging [Brute Logic's](https://brutelogic.com.br/blog/about) [KNOXSS API](https://knoxss.pro)**
 
@@ -28,16 +28,19 @@ curl -sSL https://raw.githubusercontent.com/0xPugal/knoxsser/master/knoxsser.sh 
 ## Help
 ```
 Options:
-  -i, --input     Input file containing URLs or single URL to scan
-  -o, --output    Output file to save XSS results (default: xss.txt)
-  -A, --api       API key for Knoxss
-  -s, --silent    Print only results without displaying the banner and target count
-  -n, --notify    Send notifications on successful XSSes via notify
-  -p, --process   Number of URLs to scan parallely(1-5) (default: 3)
-  -r, --retry     Number of times to retry on target connection issues and can't finish scans"
-  -v, --version   Display the version and exit
-  -V, --verbose   Enable verbose output
-  -h, --help      Display this help message and exit
+  -i,  --input            Input file containing URLs or single URL to scan
+  -o,  --output           Output file to save XSS results (default: xss.txt)
+  -A,  --api              API key for Knoxss
+  -s,  --silent           Print only results without displaying the banner and target count
+  -n,  --notify           Send notifications on successful XSSes via notify
+  -p,  --process          Number of URLs to scan in parallel (1-5) (default: 3)
+  -r,  --retry            Number of times to retry on target connection issues & can't finish scans (default: 1)
+  -ri, --retry-interval   Seconds to wait before retrying when having issues connecting to the KNOXSS API (default: 15)
+  -v,  --version          Display the version and exit
+  -V,  --verbose          Enable verbose output
+  -h,  --help             Display this help message and exit
+  -c,  --cookies          Cookies for authenticated GET requests
+  -pd, --postdata         POST data for POST requests
 ```
 
 ## Features
@@ -45,11 +48,13 @@ Options:
    - Unscanned / Remaining URLs and URLs that encountered errors  are saved in a `<input>+date-time.todo` file, providing a record of URLs not successfully scanned along with a timestamp.
    - Ability to stop the scan and save the remaining URLs in a `<input>+date-time.todo` file.
    - Successful XSS results are saved by default in `xss.txt`, with their full JSON responses, and `error.log` file for further investigation for Unknown Errors.
-   - Ability to retry the scan, if any error like `Connection issues` or `can't able to scan by knoxss`
-   - Prints the API calls number along with the scanning process.
    - Send notifications on successful XSSes through notify
    - Parallel scans options for faster scan completion
    - Verbose option functionality for printing response from knoxss api in the terminal
+   - Added support for authenticated scans by passing cookies and authorization headers. and scanning URLs with POST data.
+   - Ability to retry the scan, if any error like `Connection issues` or `can't able to scan by knoxss`
+   - Prints the API calls number along with the scanning process.
+   - Added a new option (-ri or --retry-interval) to specify the interval (in seconds) between retries for failed scans.
 
 ## Usage
 ```
@@ -61,6 +66,12 @@ Options:
 
 # Scan a list of URLs
   knoxsser --input urls.txt
+
+# Scan the post data request
+  knoxsser -i http://testphp.vulnweb.com/search.php -pd 'test=query&post=searchFor=any%26goButton=go'
+
+# Scan the url with auth headers
+  knoxsser -i "https://brutelogic.com.br/session/index.php?name=guest" -c "Cookie:PHPSESSID=9p77u90dssmkmn3kgmmgq3b5d3"
 
 # Send the notification on successful xss through notify
   knoxsser --input input.txt --notify

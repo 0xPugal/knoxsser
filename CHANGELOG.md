@@ -1,3 +1,10 @@
++ v2.0
+    - Added support for scanning URLs with POST data using the `-pd` or `--postdata` option.
+    - Added support for authenticated scans by passing cookies (`-c` or `--cookies`) and authorization headers.
+    - Added a new option (`-ri` or `--retry-interval`) to specify the interval (in seconds) between retries for failed scans.
+    - Improved the update process to remove the old `knoxsser` binary file before updating to the latest version.
+    - Improved error handling for API rate limits, service unavailability, and other edge cases.
+      
 + v1.8
     - Added version checking functionality.
     - Prompt user to update the script if outdated.
